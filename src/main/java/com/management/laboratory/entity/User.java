@@ -6,9 +6,34 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
+    private int userId;//user id
+    private String account;//user account
+    private String password;//user password
+    private int permission;//user permission 0 管理员 1教师 2学生
 
-    private String account;
-    private String password;
-    private int permission;
-    private String id;
+    public User(String account, String password, int permission) {
+        this.account = account;
+        this.password = password;
+        this.permission = permission;
+    }
+
+    public User(int userId, String account, String password, int permission) {
+        this.userId = userId;
+        this.account = account;
+        this.password = password;
+        this.permission = permission;
+    }
+
+    public User() {
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", permission=" + permission +
+                '}';
+    }
 }
