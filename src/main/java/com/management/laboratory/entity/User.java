@@ -3,6 +3,10 @@ package com.management.laboratory.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 用户实体类
+ * 每个用户对应一个用户账号，一个密码，一个权限
+ */
 @Getter
 @Setter
 public class User {

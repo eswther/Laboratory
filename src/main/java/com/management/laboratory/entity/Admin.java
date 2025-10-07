@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Admin extends User{
+public class Admin extends User{ // 管理员实体，继承自用户实体，具有最高权限
 
     private int adminId;
     private String name;

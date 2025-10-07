@@ -5,6 +5,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 教师实体类
+ * 每个教师实体对应多个学生
+ */
 @Getter
 @Setter
 public class Teacher extends User{

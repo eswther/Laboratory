@@ -3,6 +3,10 @@ package com.management.laboratory.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 学生实体类
+ * 每个学生实体对应一个负责教师
+ */
 @Getter
 @Setter
 public class Student extends User{
