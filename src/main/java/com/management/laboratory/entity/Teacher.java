@@ -6,4 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Teacher extends User{
+
+    private String teacherId;
+    private String department;
 }
