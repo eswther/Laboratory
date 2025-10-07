@@ -1,0 +1,6 @@
+#datasouse
+datasource:
+  url: jdbc:mysql://localhost:3306/ #数据库名称
+  username: root
+  password: # yourpassword
+  driver-class-name: com.mysql.cj.jdbc.Driver
