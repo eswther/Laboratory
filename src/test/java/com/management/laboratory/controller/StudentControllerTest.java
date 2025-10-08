@@ -20,7 +20,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +44,9 @@ class StudentControllerTest {
     private Student mockStudent;
     private Teacher mockTeacher;
 
+    /**
+     * 测试数据初始化
+     */
     @BeforeEach
     void setUp() {
         // 初始化模拟对象
@@ -61,6 +63,10 @@ class StudentControllerTest {
         mockStudent.setTeacher(mockTeacher);
     }
 
+    /**
+     * 测试注册学生功能
+     * 测试 注册成功情况
+     */
     @Test
     void register_Student_Success() {
         // 准备测试数据
@@ -91,6 +97,9 @@ class StudentControllerTest {
         verify(userService, times(1)).setShareStudent(any(Student.class));
     }
 
+    /**
+     * 测试 注册失败情况 - 学号已存在
+     */
     @Test
     void register_Student_NumberAlreadyExists() {
         // 准备测试数据
@@ -118,6 +127,9 @@ class StudentControllerTest {
         verify(userService, never()).setShareStudent(any(Student.class));
     }
 
+    /**
+     * 测试 注册失败情况 - 用户插入失败
+     */
     @Test
     void register_Student_UserInsertFailed() {
         // 准备测试数据
@@ -147,6 +159,9 @@ class StudentControllerTest {
         verify(studentMapper, times(1)).insertStudent(any(Student.class));
     }
 
+    /**
+     * 测试 注册失败情况 - 教师不存在
+     */
     @Test
     void register_Student_StudentInsertFailed() {
         // 准备测试数据
@@ -176,6 +191,9 @@ class StudentControllerTest {
         verify(studentMapper, times(1)).insertStudent(any(Student.class));
     }
 
+    /**
+     * 测试 注册失败情况 - 教师不存在
+     */
     @Test
     void register_Student_TeacherNotFound() {
         // 准备测试数据
@@ -203,6 +221,9 @@ class StudentControllerTest {
         verify(studentMapper, never()).insertStudent(any(Student.class));
     }
 
+    /**
+     * 测试 注册失败情况 - 无效的教师ID
+     */
     @Test
     void register_Student_WithNullTeacherId() {
         // 准备测试数据 - 没有提供teacherId
@@ -232,6 +253,9 @@ class StudentControllerTest {
         verify(studentMapper, never()).insertStudent(any(Student.class));
     }
 
+    /**
+     * 测试 注册失败情况 - 无效的教师ID
+     */
     @Test
     void register_Student_WithInvalidTeacherId() {
         // 准备测试数据 - 无效的teacherId
