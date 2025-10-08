@@ -4,9 +4,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 管理员实体类
+ * 继承自用户实体，具有最高权限
+ */
 @Getter
 @Setter
-public class Admin extends User{ // 管理员实体，继承自用户实体，具有最高权限
+public class Admin extends User{
 
     private int adminId;
     private String name;

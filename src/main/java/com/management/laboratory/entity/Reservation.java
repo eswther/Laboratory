@@ -5,12 +5,12 @@ import lombok.Setter;
 
 import java.sql.Time;
 
-@Getter
-@Setter
 /**
  * 预约实体类
  * 每个预约实体对应一个实验室
  */
+@Getter
+@Setter
 public class Reservation {
 
     private int reservationId;
