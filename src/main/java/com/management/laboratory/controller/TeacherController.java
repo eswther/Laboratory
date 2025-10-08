@@ -1,6 +1,7 @@
 package com.management.laboratory.controller;
 import com.management.laboratory.entity.Student;
 import com.management.laboratory.entity.Teacher;
+import com.management.laboratory.entity.User;
 import com.management.laboratory.mapper.StudentMapper;
 import com.management.laboratory.mapper.TeacherMapper;
 import com.management.laboratory.mapper.UserMapper;
@@ -29,8 +30,10 @@ public class TeacherController {
 
     @RequestMapping("/register/teacher")
     public int register(@RequestBody Map<String, String> teacherInfo){
-        Teacher newTeacher = new Teacher(userService.getShareUser().getAccount(), userService.getShareUser().getPassword(),
-                userService.getShareUser().getPermission(), teacherInfo.get("department"), teacherInfo.get("name"), teacherInfo.get("number"));
+        User shareUser = userService.getShareUser();
+        Teacher newTeacher = new Teacher(shareUser.getAccount(), shareUser.getPassword(),
+                shareUser.getPermission(), teacherInfo.get("department"),
+                teacherInfo.get("name"), teacherInfo.get("number"));
         int result0 = 0;
         int result1 = 0;
         List<Student> students = null;

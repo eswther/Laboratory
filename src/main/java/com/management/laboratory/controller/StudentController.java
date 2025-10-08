@@ -1,6 +1,7 @@
 package com.management.laboratory.controller;
 import com.management.laboratory.entity.Student;
 import com.management.laboratory.entity.Teacher;
+import com.management.laboratory.entity.User;
 import com.management.laboratory.mapper.StudentMapper;
 import com.management.laboratory.mapper.TeacherMapper;
 import com.management.laboratory.mapper.UserMapper;
@@ -30,8 +31,9 @@ public class StudentController {
 
     @RequestMapping("/register/student")
     public int register(@RequestBody Map<String, String> studentInfo){
-        Student newStudent = new Student(userService.getShareUser().getAccount(), userService.getShareUser().getPassword(),
-                userService.getShareUser().getPermission(), studentInfo.get("major"),
+        User shareUser = userService.getShareUser();
+        Student newStudent = new Student(shareUser.getAccount(), shareUser.getPassword(),
+                shareUser.getPermission(), studentInfo.get("major"),
                 studentInfo.get("name"), studentInfo.get("department"), studentInfo.get("number"));
         int result0 = 0;
         int result1 = 0;
@@ -40,6 +42,7 @@ public class StudentController {
             result1 = 2; // number already exists
         }else {
             Teacher teacher = teacherMapper.selectTeacherById(Integer.parseInt(studentInfo.get("teacherId")));
+            if (teacher == null) return 3; // teacher does not exist
             newStudent.setTeacher(teacher);
             student = newStudent;
             userService.setShareStudent(newStudent);
