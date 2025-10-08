@@ -13,6 +13,9 @@ public interface TeacherMapper {
     @Select("SELECT * FROM teacher WHERE id = #{id}")
     public Teacher selectTeacherById(int id);
 
+    @Select("SELECT * FROM teacher WHERE user_id = #{userId}")
+    public Teacher selectTeacherByUserId(int userId);
+
     @Select("SELECT * FROM teacher WHERE number = #{number}")
     Teacher selectTeacherByNumber(String number);
 

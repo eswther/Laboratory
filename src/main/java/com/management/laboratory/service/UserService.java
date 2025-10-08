@@ -1,5 +1,6 @@
 package com.management.laboratory.service;
 
+import com.management.laboratory.entity.Admin;
 import com.management.laboratory.entity.Student;
 import com.management.laboratory.entity.Teacher;
 import com.management.laboratory.entity.User;
@@ -13,4 +14,5 @@ public class UserService {
     User shareUser;
     Student shareStudent;
     Teacher shareTeacher;
+    Admin shareAdmin;
 }

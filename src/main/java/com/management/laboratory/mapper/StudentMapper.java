@@ -2,17 +2,18 @@ package com.management.laboratory.mapper;
 
 import com.management.laboratory.entity.Student;
 import com.management.laboratory.entity.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
 public interface StudentMapper {
+
     @Select("SELECT * FROM student WHERE number = #{number}")
     Student selectStudentByNumber(String number);
+
+    @Select("SELECT * FROM student WHERE user_id = #{userId}")
+    Student selectStudentByUserId(int userId);
 
     @Insert("INSERT INTO student (department, name, number, major, teacher_id) " +
             "VALUES (#{department}, #{name}, #{number}, #{major}, #{teacher.getId()})")
