@@ -1,6 +1,6 @@
 #datasouse
 datasource:
-  url: jdbc:mysql://localhost:3306/ #数据库名称
+  url: jdbc:mysql://localhost:3306/laboratory_management #数据库名称
   username: root
-  password: # yourpassword
+  password: sunny!!8246
   driver-class-name: com.mysql.cj.jdbc.Driver

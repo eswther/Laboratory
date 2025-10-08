@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 /**
  * 维修记录实体
@@ -18,7 +19,7 @@ public class Maintenance {
     private int equipmentId;
 
     // 下面属性调用了 java.sql.Time 类，继承 java.util.Date 类，可能需要调换
-    private Time reportTime;
+    private LocalDateTime reportTime;
 
     private String notes;
 
@@ -27,14 +28,14 @@ public class Maintenance {
     public Maintenance() {
     }
 
-    public Maintenance(int equipmentId, Time reportTime, String notes, int status) {
+    public Maintenance(int equipmentId, LocalDateTime reportTime, String notes, int status) {
         this.equipmentId = equipmentId;
         this.reportTime = reportTime;
         this.notes = notes;
         this.status = status;
     }
 
-    public Maintenance(int maintenanceId, int equipmentId, Time reportTime, String notes, int status) {
+    public Maintenance(int maintenanceId, int equipmentId, LocalDateTime reportTime, String notes, int status) {
         this.maintenanceId = maintenanceId;
         this.equipmentId = equipmentId;
         this.reportTime = reportTime;

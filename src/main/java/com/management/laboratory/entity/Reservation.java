@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 /**
  * 预约实体类
@@ -20,16 +21,16 @@ public class Reservation {
     private String projectName;
 
     // 下面两个属性调用了 java.sql.Time 类，继承 java.util.Date 类，可能需要调换
-    private Time startTime;
+    private LocalDateTime startTime;
 
-    private Time endTime;
+    private LocalDateTime endTime;
 
     private int status;
 
     public Reservation() {
     }
 
-    public Reservation(int labId, String projectName, Time startTime, Time endTime, int status) {
+    public Reservation(int labId, String projectName, LocalDateTime startTime, LocalDateTime endTime, int status) {
         this.labId = labId;
         this.projectName = projectName;
         this.startTime = startTime;
@@ -37,7 +38,7 @@ public class Reservation {
         this.status = status;
     }
 
-    public Reservation(int reservationId, int labId, String projectName, Time startTime, Time endTime, int status) {
+    public Reservation(int reservationId, int labId, String projectName, LocalDateTime startTime, LocalDateTime endTime, int status) {
         this.reservationId = reservationId;
         this.labId = labId;
         this.projectName = projectName;

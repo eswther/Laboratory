@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 /**
  * 用户预约记录实体
@@ -11,7 +12,7 @@ import java.sql.Time;
  */
 @Getter
 @Setter
-public class Userrecord {
+public class UserRecord {
 
     private int recordId;
 
@@ -20,21 +21,21 @@ public class Userrecord {
     private String notes;
 
     // 下面属性调用了 java.sql.Time 类，继承 java.util.Date 类，可能需要调换
-    private Time startTime;
+    private LocalDateTime startTime;
 
-    private Time endTime;
+    private LocalDateTime endTime;
 
-    public Userrecord() {
+    public UserRecord() {
     }
 
-    public Userrecord(int reservationId, String notes, Time startTime, Time endTime) {
+    public UserRecord(int reservationId, String notes, LocalDateTime startTime, LocalDateTime endTime) {
         this.reservationId = reservationId;
         this.notes = notes;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public Userrecord(int recordId, int reservationId, String notes, Time startTime, Time endTime) {
+    public UserRecord(int recordId, int reservationId, String notes, LocalDateTime startTime, LocalDateTime endTime) {
         this.recordId = recordId;
         this.reservationId = reservationId;
         this.notes = notes;
