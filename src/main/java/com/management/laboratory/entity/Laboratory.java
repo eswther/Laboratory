@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,13 +26,13 @@ public class Laboratory {
     private List<Equipment> equipments;
 
     // 下面两个时间调用了 java.sql.Time 类，继承 java.util.Date 类
-    private Time openTime;
-    private Time closeTime;
+    private LocalDateTime openTime;
+    private LocalDateTime closeTime;
 
     public Laboratory() {
     }
 
-    public Laboratory(String labName, String location, int capacity, List<Equipment> equipments, Time openTime, Time closeTime) {
+    public Laboratory(String labName, String location, int capacity, List<Equipment> equipments, LocalDateTime openTime, LocalDateTime closeTime) {
         this.labName = labName;
         this.location = location;
         this.capacity = capacity;
@@ -40,7 +41,7 @@ public class Laboratory {
         this.closeTime = closeTime;
     }
 
-    public Laboratory(int labId, String labName, String location, int capacity, List<Equipment> equipments, Time openTime, Time closeTime) {
+    public Laboratory(int labId, String labName, String location, int capacity, List<Equipment> equipments, LocalDateTime openTime, LocalDateTime closeTime) {
         this.labId = labId;
         this.labName = labName;
         this.location = location;
