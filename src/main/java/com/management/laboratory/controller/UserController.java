@@ -29,43 +29,66 @@ public class UserController {
     UserService userService;
 
     User user;
+
+    /**
+     * 注册方法
+     * 接受用户的注册请求，并将用户信息保存到数据库中，返回注册结果
+     * @param userInfo 用户信息
+     * @return 1: 注册成功 2: 账号已存在 0: 注册失败
+     */
     @PostMapping("/register")
     public int register(@RequestBody Map<String, String> userInfo) {
+        // 创建一个用户对象
         User newUser = new User(userInfo.get("account"), userInfo.get("password"), Integer.parseInt(userInfo.get("permission")));
+
+        // 创建结果返回值，默认为0。
         int result = 0;
+
+        // 判断账号是否已存在
         if(userMapper.selectUserByAccount(newUser.getAccount()) != null) {
-            result = 2; // Account already exists
+            result = 2; // 将返回值设置为2，表示账号已存在
         }else {
             userService.setShareUser(newUser);
             user = newUser;
-            result = 1;
+            result = 1; // 将返回值设置为1，表示注册成功
         }
-        return result; // Placeholder return value
+
+        return result; // 返回注册结果。
     }
 
+    /**
+     * 登录方法
+     * 接受用户的登录请求，并验证用户信息，返回登录结果
+     * @param userInfo 用户信息
+     * @return 登录结果
+     */
     @PostMapping("/login")
     public boolean login(@RequestBody Map<String, String> userInfo) {
+        // 跟据用户输入的账号和密码，从数据库中查询用户信息
         User loginUser = userMapper.selectUserByAccount(userInfo.get("account"));
+
+
         if (loginUser == null){
-            return false; // Account does not exist
+            return false; // 如果查询结果为空，则返回false，表示用户不存在。
         }else if (!loginUser.getPassword().equals(userInfo.get("password"))){
-            return false;
-        }else {
+            return false; // 如果密码不匹配，则返回false，表示登录失败。
+        }else { // 如果用户名和密码都匹配，则继续进行登录操作。
             userService.setShareUser(loginUser);
+
             switch (loginUser.getPermission()){
-                case 0:
+                case 0: // 如果用户权限为0，则将用户信息保存到Admin对象中。
                     userService.setShareAdmin(adminMapper.selectAdminByUserId(loginUser.getUserId()));
                     break;
-                case 1:
+                case 1: // 如果用户权限为1，则将用户信息保存到Teacher对象中。
                     userService.setShareTeacher(teacherMapper.selectTeacherByUserId(loginUser.getUserId()));
                     break;
-                case 2:
+                case 2: // 如果用户权限为2，则将用户信息保存到Student对象中。
                     userService.setShareStudent(studentMapper.selectStudentByUserId(loginUser.getUserId()));
                     break;
                 default:
                     return false;
             }
         }
-        return true; // Placeholder return value
+        return true; // 返回登录结果。
     }
 }
