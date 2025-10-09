@@ -4,7 +4,6 @@ package com.management.laboratory.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class Laboratory {
 
     private List<Equipment> equipments;
 
-    // 下面两个时间调用了 java.sql.Time 类，继承 java.util.Date 类
     private LocalDateTime openTime;
     private LocalDateTime closeTime;
 

@@ -6,7 +6,6 @@ import com.management.laboratory.mapper.StudentMapper;
 import com.management.laboratory.mapper.TeacherMapper;
 import com.management.laboratory.mapper.UserMapper;
 import com.management.laboratory.service.UserService;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -21,10 +21,12 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * UserController测试类
+ * 测试UserController类中的方法
+ */
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
@@ -48,12 +50,19 @@ class UserControllerTest {
 
     private User testUser;
 
+    /**
+     * 初始化测试数据
+     */
     @BeforeEach
     void setUp() {
         testUser = new User("testAccount", "testPassword", 1);
         testUser.setUserId(1); // 假设设置了用户ID
     }
 
+    /**
+     * 测试注册功能
+     * 测试注册成功
+     */
     @Test
     void register_Success() {
         // 准备测试数据
@@ -75,6 +84,10 @@ class UserControllerTest {
         verify(userService, times(1)).setShareUser(any(User.class));
     }
 
+    /**
+     * 测试注册功能
+     * 测试账号已存在
+     */
     @Test
     void register_AccountExists() {
         // 准备测试数据
@@ -95,6 +108,10 @@ class UserControllerTest {
         verify(userService, never()).setShareUser(any(User.class));
     }
 
+    /**
+     * 测试登录功能
+     * 测试登录成功情况，用户权限为管理员
+     */
     @Test
     void login_Success_Admin() {
         // 准备测试数据
@@ -121,6 +138,10 @@ class UserControllerTest {
         verify(userService, times(1)).setShareAdmin(any());
     }
 
+    /**
+     * 测试登录功能
+     * 测试登录成功情况，用户权限为教师
+     */
     @Test
     void login_Success_Teacher() {
         // 准备测试数据
@@ -147,6 +168,10 @@ class UserControllerTest {
         verify(userService, times(1)).setShareTeacher(any());
     }
 
+    /**
+     * 测试登录功能
+     * 测试登录成功情况，用户权限为学生
+     */
     @Test
     void login_Success_Student() {
         // 准备测试数据
@@ -173,6 +198,10 @@ class UserControllerTest {
         verify(userService, times(1)).setShareStudent(any());
     }
 
+    /**
+     * 测试登录功能
+     * 测试登录失败，用户不存在
+     */
     @Test
     void login_AccountNotExists() {
         // 准备测试数据
@@ -192,6 +221,10 @@ class UserControllerTest {
         verify(userService, never()).setShareUser(any(User.class));
     }
 
+    /**
+     * 测试登录功能
+     * 测试登录失败，密码错误
+     */
     @Test
     void login_WrongPassword() {
         // 准备测试数据
@@ -211,6 +244,10 @@ class UserControllerTest {
         verify(userService, never()).setShareUser(any(User.class));
     }
 
+    /**
+     * 测试登录功能
+     * 测试登录失败，用户权限无效
+     */
     @Test
     void login_InvalidPermission() {
         // 准备测试数据

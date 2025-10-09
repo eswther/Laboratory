@@ -1,7 +1,6 @@
 package com.management.laboratory.mapper;
 
 import com.management.laboratory.entity.Student;
-import com.management.laboratory.entity.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

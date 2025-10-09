@@ -1,6 +1,5 @@
 package com.management.laboratory.mapper;
 
-import com.management.laboratory.entity.Student;
 import com.management.laboratory.entity.Teacher;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;

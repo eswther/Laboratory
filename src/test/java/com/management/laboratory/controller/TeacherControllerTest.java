@@ -14,9 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,6 +43,9 @@ class TeacherControllerTest {
     private Teacher mockTeacher;
     private Student mockStudent;
 
+    /**
+     * 测试数据初始化
+     */
     @BeforeEach
     void setUp() {
         // 初始化模拟对象
@@ -61,6 +62,10 @@ class TeacherControllerTest {
         mockStudent.setNumber("20230001");
     }
 
+    /**
+     * 测试注册教师功能
+     * 测试 注册成功情况
+     */
     @Test
     void register_Teacher_Success() {
         // 准备测试数据
@@ -87,6 +92,10 @@ class TeacherControllerTest {
         verify(userService, times(1)).setShareTeacher(any(Teacher.class));
     }
 
+    /**
+     * 测试 注册教师功能
+     * 测试 工号已存在情况
+     */
     @Test
     void register_Teacher_NumberAlreadyExists() {
         // 准备测试数据
@@ -111,6 +120,10 @@ class TeacherControllerTest {
         verify(userService, never()).setShareTeacher(any(Teacher.class));
     }
 
+    /**
+     * 测试 注册教师功能
+     * 测试 用户插入失败情况
+     */
     @Test
     void register_Teacher_UserInsertFailed() {
         // 准备测试数据
@@ -137,6 +150,10 @@ class TeacherControllerTest {
         verify(userService, times(1)).setShareTeacher(any(Teacher.class));
     }
 
+    /**
+     * 测试 注册教师功能
+     * 测试 教师插入失败情况
+     */
     @Test
     void register_Teacher_TeacherInsertFailed() {
         // 准备测试数据
@@ -163,6 +180,10 @@ class TeacherControllerTest {
         verify(userService, times(1)).setShareTeacher(any(Teacher.class));
     }
 
+    /**
+     * 测试 注册教师功能
+     * 测试 插入失败情况
+     */
     @Test
     void register_Teacher_BothInsertFailed() {
         // 准备测试数据
@@ -189,6 +210,10 @@ class TeacherControllerTest {
         verify(userService, times(1)).setShareTeacher(any(Teacher.class));
     }
 
+    /**
+     * 测试 注册教师功能
+     * 测试 创建学生列表失败情况
+     */
     @Test
     void register_Teacher_StudentsListInitialized() {
         // 准备测试数据
@@ -215,6 +240,10 @@ class TeacherControllerTest {
         verify(teacherMapper, times(1)).insertTeacher(any(Teacher.class));
     }
 
+    /**
+     * 测试 注册教师功能
+     * 测试 创建教师对象失败情况
+     */
     @Test
     void register_Teacher_WithEmptyInfo() {
         // 准备测试数据 - 空信息
@@ -240,6 +269,10 @@ class TeacherControllerTest {
         verify(teacherMapper, times(1)).insertTeacher(any(Teacher.class));
     }
 
+    /**
+     * 测试 注册教师功能
+     * 测试 创建教师对象失败情况
+     */
     @Test
     void register_Teacher_VerifyTeacherObjectCreation() {
         // 准备测试数据

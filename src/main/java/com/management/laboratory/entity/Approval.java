@@ -3,7 +3,6 @@ package com.management.laboratory.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 
 /**
@@ -22,7 +21,6 @@ public class Approval {
 
     private int status;
 
-    // 下面属性调用了 java.sql.Time 类，继承 java.util.Date 类，可能需要调换
     private LocalDateTime approvalTime;
 
     public Approval() {
