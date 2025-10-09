@@ -9,9 +9,9 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface AdminMapper {
     @Select("SELECT " +
-            "a.*" +
+            "a.*," +
             "u.account, " +
-            "u.password " +
+            "u.password, " +
             "u.permission " +
             "FROM admin a " +
             "JOIN user u ON a.user_id = u.user_id " +

@@ -22,6 +22,14 @@ public interface UserMapper {
     User selectUserByAccount(String account);
 
     /**
+     * 根据用户id查询用户信息
+     * @param userId 用户id
+     * @return 用户信息
+     */
+    @Select("SELECT * FROM user WHERE user_id = #{userId}")
+    User selectUserByUserId(int userId);
+
+    /**
      * 插入用户信息
      * @param user 用户信息
      * @return 插入成功返回1

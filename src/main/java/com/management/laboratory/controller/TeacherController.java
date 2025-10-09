@@ -7,6 +7,7 @@ import com.management.laboratory.mapper.TeacherMapper;
 import com.management.laboratory.mapper.UserMapper;
 import com.management.laboratory.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,5 +69,33 @@ public class TeacherController {
         } else {
             return 0; // 当两个结果都不为1时，表示注册失败
         }
+    }
+
+    @RequestMapping("/teacherInfo")
+    public Teacher getStudentInfo(Map<String, String> teacherInfo) {
+        Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
+        User user = userMapper.selectUserByUserId(Integer.parseInt(teacherInfo.get("userId")));
+        teacher.setUserId(user.getUserId());
+        teacher.setPassword(user.getPassword());
+        teacher.setAccount(user.getAccount());
+        teacher.setPermission(user.getPermission());
+        return teacher;
+    }
+
+    @PostMapping("/updateTeacherInfo")
+    public boolean updateStudentInfo(@RequestBody Map<String, String> teacherInfo) {
+        Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
+        if (teacher == null) {
+            return false; // 学生不存在，返回false
+        }
+
+        // 更新学生信息
+        teacher.setName(teacherInfo.get("name"));
+        teacher.setDepartment(teacherInfo.get("department"));
+        teacher.setNumber(teacherInfo.get("number"));
+
+        // 这里假设有一个方法可以更新学生信息到数据库中
+        int updateResult = teacherMapper.updateTeacher(teacher);
+        return updateResult == 1; // 返回更新是否成功
     }
 }

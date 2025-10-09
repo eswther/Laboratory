@@ -1,6 +1,7 @@
 package com.management.laboratory.mapper;
 
 import com.management.laboratory.entity.Student;
+import com.management.laboratory.entity.Teacher;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -25,7 +26,39 @@ public interface StudentMapper {
      * @param userId 用户id
      * @return 学生信息
      */
-    @Select("SELECT * FROM student WHERE user_id = #{userId}")
+    @Select("SELECT s.student_id, s.user_id, s.name, s.department, s.number, s.major," +
+            "       t.teacher_id, t.user_id, t.name, t.number, t.department " +
+            "FROM student s " +
+            "LEFT JOIN teacher t ON s.teacher_id = t.teacher_id " +
+            "WHERE s.user_id = #{userId}")
+    @Results({
+            @Result(property = "id", column = "student_id"),
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "name", column = "name"),
+            @Result(property = "department", column = "department"),
+            @Result(property = "number", column = "number"),
+            @Result(property = "major", column = "major"),
+            @Result(property = "teacher", column = "teacher_id", javaType = Teacher.class,
+                    one = @One(resultMap = "com.management.laboratory.mapper.TeacherMapper.selectTeacherById"))
+    })
+    Student selectStudentByUserId0(int userId);
+
+    /**
+     * 根据用户id查询学生信息
+     * @param userId 用户id
+     * @return 学生信息
+     */
+    @Select("SELECT s.student_id, s.user_id, s.name, s.department, s.number, s.major " +
+            "FROM student s " +
+            "WHERE s.user_id = #{userId}")
+    @Results({
+            @Result(property = "id", column = "student_id"),
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "name", column = "name"),
+            @Result(property = "department", column = "department"),
+            @Result(property = "number", column = "number"),
+            @Result(property = "major", column = "major")
+    })
     Student selectStudentByUserId(int userId);
 
     /**
@@ -46,5 +79,19 @@ public interface StudentMapper {
     @Select("SELECT s.* FROM student s " +
             "WHERE s.teacher_id = #{teacherId}")
     List<Student> selectStudentsByTeacherId(int teacherId);
+
+    /**
+     * 更新学生信息
+     * @param student 学生信息
+     * @return 更新结果
+     */
+    @Update("UPDATE student SET " +
+            "department = #{department}, " +
+            "name = #{name}, " +
+            "number = #{number}, " +
+            "major = #{major}, " +
+            "teacher_id = #{teacher.getTeacherId()} " +
+            "WHERE student_id = #{studentId}")
+    public int updateStudent(Student student);
 
 }

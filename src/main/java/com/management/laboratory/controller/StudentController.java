@@ -7,6 +7,7 @@ import com.management.laboratory.mapper.TeacherMapper;
 import com.management.laboratory.mapper.UserMapper;
 import com.management.laboratory.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,6 +80,37 @@ public class StudentController {
             return 0;
         }
     }
+
+    @RequestMapping("/studentInfo")
+    public Student getStudentInfo(Map<String, String> studentInfo) {
+        Student student = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
+        User user = userMapper.selectUserByUserId(Integer.parseInt(studentInfo.get("userId")));
+        student.setUserId(user.getUserId());
+        student.setPassword(user.getPassword());
+        student.setAccount(user.getAccount());
+        student.setPermission(user.getPermission());
+        return student;
+    }
+
+    @PostMapping("/updateStudentInfo")
+    public boolean updateStudentInfo(@RequestBody Map<String, String> studentInfo) {
+        Student existingStudent = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
+        if (existingStudent == null) {
+            return false; // 学生不存在，返回false
+        }
+
+        // 更新学生信息
+        existingStudent.setName(studentInfo.get("name"));
+        existingStudent.setDepartment(studentInfo.get("department"));
+        existingStudent.setMajor(studentInfo.get("major"));
+        existingStudent.setNumber(studentInfo.get("number"));
+
+        // 这里假设有一个方法可以更新学生信息到数据库中
+        int updateResult = studentMapper.updateStudent(existingStudent);
+        return updateResult == 1; // 返回更新是否成功
+    }
+
+
 
 
 }
