@@ -71,6 +71,11 @@ public class TeacherController {
         }
     }
 
+    /**
+     * 获取教师信息
+     * @param teacherInfo 教师信息
+     * @return 教师信息
+     */
     @RequestMapping("/teacherInfo")
     public Teacher getStudentInfo(Map<String, String> teacherInfo) {
         Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
@@ -82,6 +87,11 @@ public class TeacherController {
         return teacher;
     }
 
+    /**
+     * 更新教师信息
+     * @param teacherInfo 教师信息
+     * @return 更新结果
+     */
     @PostMapping("/updateTeacherInfo")
     public boolean updateStudentInfo(@RequestBody Map<String, String> teacherInfo) {
         Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
