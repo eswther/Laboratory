@@ -78,13 +78,18 @@ public class TeacherController {
      */
     @RequestMapping("/teacherInfo")
     public Teacher getStudentInfo(Map<String, String> teacherInfo) {
+        // 获取教师信息
         Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
-        User user = userMapper.selectUserByUserId(Integer.parseInt(teacherInfo.get("userId")));
+
+        User user = userMapper.selectUserByUserId(Integer.parseInt(teacherInfo.get("userId"))); // 获取用户信息
+
+        // 设置用户信息
         teacher.setUserId(user.getUserId());
         teacher.setPassword(user.getPassword());
         teacher.setAccount(user.getAccount());
         teacher.setPermission(user.getPermission());
-        return teacher;
+
+        return teacher; // 返回教师信息
     }
 
     /**
