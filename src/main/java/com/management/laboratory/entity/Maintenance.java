@@ -15,7 +15,7 @@ public class Maintenance {
 
     private int maintenanceId;
 
-    private int equipmentId;
+    private Equipment  equipment;
 
     private LocalDateTime reportTime;
 
@@ -26,16 +26,16 @@ public class Maintenance {
     public Maintenance() {
     }
 
-    public Maintenance(int equipmentId, LocalDateTime reportTime, String notes, int status) {
-        this.equipmentId = equipmentId;
+    public Maintenance(Equipment  equipment, LocalDateTime reportTime, String notes, int status) {
+        this.equipment = equipment;
         this.reportTime = reportTime;
         this.notes = notes;
         this.status = status;
     }
 
-    public Maintenance(int maintenanceId, int equipmentId, LocalDateTime reportTime, String notes, int status) {
+    public Maintenance(int maintenanceId, Equipment  equipment, LocalDateTime reportTime, String notes, int status) {
         this.maintenanceId = maintenanceId;
-        this.equipmentId = equipmentId;
+        this.equipment = equipment;
         this.reportTime = reportTime;
         this.notes = notes;
         this.status = status;
@@ -45,7 +45,7 @@ public class Maintenance {
     public String toString() {
         return "Maintenance{" +
                 "maintenanceId=" + maintenanceId +
-                ", equipmentId=" + equipmentId +
+                ", equipmentId=" + equipment +
                 ", reportTime=" + reportTime +
                 ", notes='" + notes + '\'' +
                 ", status=" + status +

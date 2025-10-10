@@ -15,7 +15,7 @@ public class Reservation {
 
     private int reservationId;
 
-    private int labId;
+    private Laboratory lab;
 
     private String projectName;
 
@@ -28,17 +28,17 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(int labId, String projectName, LocalDateTime startTime, LocalDateTime endTime, int status) {
-        this.labId = labId;
+    public Reservation(Laboratory  lab, String projectName, LocalDateTime startTime, LocalDateTime endTime, int status) {
+        this.lab = lab;
         this.projectName = projectName;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
     }
 
-    public Reservation(int reservationId, int labId, String projectName, LocalDateTime startTime, LocalDateTime endTime, int status) {
+    public Reservation(int reservationId, Laboratory lab, String projectName, LocalDateTime startTime, LocalDateTime endTime, int status) {
         this.reservationId = reservationId;
-        this.labId = labId;
+        this.lab = lab;
         this.projectName = projectName;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -49,7 +49,7 @@ public class Reservation {
     public String toString() {
         return "Reservation{" +
                 "reservationId=" + reservationId +
-                ", labId=" + labId +
+                ", labId=" + lab +
                 ", projectName='" + projectName + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
