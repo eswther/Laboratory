@@ -41,7 +41,7 @@ public interface StudentMapper {
             @Result(property = "teacher", column = "teacher_id", javaType = Teacher.class,
                     one = @One(resultMap = "com.management.laboratory.mapper.TeacherMapper.selectTeacherById"))
     })
-    Student selectStudentByUserId0(int userId);
+    Student selectStudentByUserId(int userId);
 
     /**
      * 根据用户id查询学生信息
@@ -59,7 +59,7 @@ public interface StudentMapper {
             @Result(property = "number", column = "number"),
             @Result(property = "major", column = "major")
     })
-    Student selectStudentByUserId(int userId);
+    Student selectStudentByUserId0(int userId);
 
     /**
      * 插入学生信息
