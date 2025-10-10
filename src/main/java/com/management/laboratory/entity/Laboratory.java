@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -24,13 +25,13 @@ public class Laboratory {
 
     private List<Equipment> equipments;
 
-    private LocalDateTime openTime;
-    private LocalDateTime closeTime;
+    private LocalTime openTime;
+    private LocalTime closeTime;
 
     public Laboratory() {
     }
 
-    public Laboratory(String labName, String location, int capacity, List<Equipment> equipments, LocalDateTime openTime, LocalDateTime closeTime) {
+    public Laboratory(String labName, String location, int capacity, List<Equipment> equipments, LocalTime openTime, LocalTime closeTime) {
         this.labName = labName;
         this.location = location;
         this.capacity = capacity;
@@ -39,7 +40,7 @@ public class Laboratory {
         this.closeTime = closeTime;
     }
 
-    public Laboratory(int labId, String labName, String location, int capacity, List<Equipment> equipments, LocalDateTime openTime, LocalDateTime closeTime) {
+    public Laboratory(int labId, String labName, String location, int capacity, List<Equipment> equipments, LocalTime openTime, LocalTime closeTime) {
         this.labId = labId;
         this.labName = labName;
         this.location = location;

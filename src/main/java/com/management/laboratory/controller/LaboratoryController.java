@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class LaboratoryController {
     EquipmentMapper equipmentMapper;
 
     DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+    DateTimeFormatter localTimeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
     /**
      * 获取所有实验室信息
      * @return 实验室列表
@@ -43,8 +44,8 @@ public class LaboratoryController {
         laboratory.setLabName(labInfo.get("labName"));
         laboratory.setLocation(labInfo.get("location"));
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
-        laboratory.setOpenTime(LocalDateTime.parse(labInfo.get("openTime"), localDateTimeFormatter));
-        laboratory.setCloseTime(LocalDateTime.parse(labInfo.get("closeTime"), localDateTimeFormatter));
+        laboratory.setOpenTime(LocalTime.parse(labInfo.get("openTime"), localTimeFormat));
+        laboratory.setCloseTime(LocalTime.parse(labInfo.get("closeTime"), localTimeFormat));
         // 设备信息暂时为空
         laboratory.setEquipments(null);
         int result = laboratoryMapper.insertLaboratory(laboratory);
@@ -84,8 +85,8 @@ public class LaboratoryController {
         laboratory.setLabName(labInfo.get("labName"));
         laboratory.setLocation(labInfo.get("location"));
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
-        laboratory.setOpenTime(LocalDateTime.parse(labInfo.get("openTime"), localDateTimeFormatter));
-        laboratory.setCloseTime(LocalDateTime.parse(labInfo.get("closeTime"), localDateTimeFormatter));
+        laboratory.setOpenTime(LocalTime.parse(labInfo.get("openTime"), localTimeFormat));
+        laboratory.setCloseTime(LocalTime.parse(labInfo.get("closeTime"), localTimeFormat));
         return laboratoryMapper.updateLaboratory(laboratory);
     }
 
