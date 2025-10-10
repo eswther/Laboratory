@@ -12,8 +12,8 @@ public interface EquipmentMapper {
      * @param equipment 设备信息
      * @return 添加结果
      */
-    @Insert("INSERT INTO equipment (lab_id, equipment_name, status) " +
-            "VALUES (#{labId}, #{equipmentName}, #{status})")
+    @Insert("INSERT INTO equipment (lab_id, equipment_name, model, status) " +
+            "VALUES (#{labId}, #{equipmentName}, #{model}, #{status})")
     @Options(useGeneratedKeys = true, keyProperty = "equipmentId", keyColumn = "equipment_id")
     int insertEquipment(com.management.laboratory.entity.Equipment equipment);
 
@@ -24,6 +24,14 @@ public interface EquipmentMapper {
      */
     @Delete("DELETE FROM equipment WHERE equipment_id = #{id}")
     int deleteEquipment(int id);
+
+    /**
+     * 根据 id 查询设备信息
+     * @param id 设备 id
+     * @return 设备信息
+     */
+    @Select("SELECT * FROM equipment WHERE equipment_id = #{id}")
+    Equipment selectEquipmentById(int id);
 
     /**
      * 根据实验室 id 删除设备
@@ -66,5 +74,12 @@ public interface EquipmentMapper {
      */
     @Select("SELECT * FROM equipment WHERE lab_id = #{labId}")
     List<Equipment> selectEquipmentByLabId(int labId);
+
+    /**
+     * 查询所有设备信息
+     * @return 设备信息列表
+     */
+    @Select("SELECT * FROM equipment")
+    List<Equipment> selectAllEquipments();
 
 }

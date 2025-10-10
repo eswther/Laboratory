@@ -2,6 +2,9 @@ package com.management.laboratory.mapper;
 
 import com.management.laboratory.entity.Laboratory;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
+
 @Mapper
 public interface LaboratoryMapper {
     /**
@@ -79,4 +82,11 @@ public interface LaboratoryMapper {
                     many = @Many(select = "com.management.laboratory.mapper.EquipmentMapper.selectEquipmentByLabId"))
     })
     Laboratory selectLaboratoryById(int labId);
+
+    /**
+     * 获取所有实验室信息
+     * @return 实验室信息列表
+     */
+    @Select("SELECT * FROM laboratory")
+    List<Laboratory> selectAllLaboratories();
 }
