@@ -22,28 +22,14 @@ public interface LaboratoryMapper {
     })
     Laboratory selectLaboratoryByName(String  name);
 
-    /**
-     * 根据 status 获取实验室信息
-     * @param status 实验室 status
-     * @return 实验室信息
-     */
-    @Select("SELECT * FROM laboratory WHERE status = #{status}")
-    @Results({
-            @Result(property = "laboratoryId", column = "laboratory_id"), // 映射 laboratory 表的 id
-            @Result(property = "name", column = "name"), // 映射 laboratory 表的 name 字段
-            @Result(property = "location", column = "location"), // 映射 laboratory 表的 location 字段
-            @Result(property = "capacity", column = "capacity"), // 映射 laboratory 表的 capacity 字段
-            @Result(property = "status", column = "status") // 映射 laboratory 表的 status 字段
-    })
-    Laboratory selectLabotatoryByStatus(int status);
 
     /**
      * 增加实验室
      * @param laboratory 实验室信息
      * @return 增加结果
      */
-    @Insert("INSERT INTO laboratory (lab_name, location, capacity, status) " +
-            " VALUES (#{labName}, #{location}, #{capacity}, #{status})")
+    @Insert("INSERT INTO laboratory (lab_name, location, capacity) " +
+            " VALUES (#{labName}, #{location}, #{capacity})")
     @Options(useGeneratedKeys = true, keyProperty = "laboratoryId", keyColumn = "laboratory_id")
     int insertLaboratory(Laboratory laboratory);
 
@@ -53,7 +39,7 @@ public interface LaboratoryMapper {
      * @return 更新结果
      */
     @Update("UPDATE laboratory " +
-            "SET lab_name = #{labName}, location = #{location}, capacity = #{capacity}, oenTime = #{openTime}, closeTime = #{closeTime} " +
+            "SET lab_name = #{labName}, location = #{location}, capacity = #{capacity}, open_Time = #{openTime}, close_Time = #{closeTime} " +
             "WHERE lab_id = #{labId}")
     int updateLaboratory(Laboratory laboratory);
 

@@ -1,6 +1,7 @@
 package com.management.laboratory.mapper;
 
 import com.management.laboratory.entity.Equipment;
+import com.management.laboratory.entity.Laboratory;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface EquipmentMapper {
      * @return 添加结果
      */
     @Insert("INSERT INTO equipment (lab_id, equipment_name, model, status) " +
-            "VALUES (#{labId}, #{equipmentName}, #{model}, #{status})")
+            "VALUES (#{lab.getLabId()}, #{equipmentName}, #{model}, #{status})")
     @Options(useGeneratedKeys = true, keyProperty = "equipmentId", keyColumn = "equipment_id")
     int insertEquipment(com.management.laboratory.entity.Equipment equipment);
 
@@ -47,7 +48,7 @@ public interface EquipmentMapper {
      * @return 更新结果
      */
     @Update("UPDATE equipment " +
-            "SET equipment_name = #{equipmentName}, lab_id = #{labId}, " +
+            "SET equipment_name = #{equipmentName}, lab_id = #{lab.getLabId()}, " +
             "equipment_name = #{equipmentName}, model = #{model}, status = #{status}")
     @Options (useGeneratedKeys = true, keyProperty = "equipmentId", keyColumn = "equipment_id")
     int updateEquipment(com.management.laboratory.entity.Equipment equipment);
@@ -57,13 +58,18 @@ public interface EquipmentMapper {
      * @param name 设备 name
      * @return 设备信息
      */
-    @Select("SELECT * FROM equipment WHERE equipment_name = #{name}")
+    @Select("SELECT * FROM equipment " +
+            "join labmanage.laboratory l " +
+            "on l.lab_id = equipment.lab_id " +
+            "WHERE equipment_name = #{name}")
     @Results({
-            @Result(property = "equipmentId", column = "equipment_id"), // 映射 equipment 表的 id
-            @Result(property = "labId", column = "lab_id"), // 映射 equipment 表的 lab_id 字段
-            @Result(property = "equipmentName", column = "equipment_name"), // 映射 equipment 表的 equipment_name 字段
-            @Result(property = "model", column = "model"), // 映射 equipment 表的 model 字段
-            @Result(property = "status", column = "status") // 映射 equipment 表的 status 字段
+            @Result(property = "equipmentId", column = "equipment_id"),
+            @Result(property = "equipmentName", column = "equipment_name"),
+            @Result(property = "model", column = "model"),
+            @Result(property = "status", column = "status"),
+            // 映射 Laboratory 对象
+            @Result(property = "lab", column = "lab_id", javaType = Laboratory.class,
+                    one = @One(select = "com.management.laboratory.mapper.LaboratoryMapper.selectLaboratoryById"))
     })
     com.management.laboratory.entity.Equipment selectEquipmentByName(String name);
 
@@ -72,14 +78,37 @@ public interface EquipmentMapper {
      * @param labId 实验室 id
      * @return 设备信息列表
      */
-    @Select("SELECT * FROM equipment WHERE lab_id = #{labId}")
+    @Select("SELECT * FROM equipment " +
+            "join labmanage.laboratory l " +
+            "on l.lab_id = equipment.lab_id " +
+            "WHERE l.lab_id = #{labId}")
+    @Results({
+            @Result(property = "equipmentId", column = "equipment_id"),
+            @Result(property = "equipmentName", column = "equipment_name"),
+            @Result(property = "model", column = "model"),
+            @Result(property = "status", column = "status"),
+            // 映射 Laboratory 对象
+            @Result(property = "lab", column = "lab_id", javaType = Laboratory.class,
+                    one = @One(select = "com.management.laboratory.mapper.LaboratoryMapper.selectLaboratoryById"))
+    })
     List<Equipment> selectEquipmentByLabId(int labId);
 
     /**
      * 查询所有设备信息
      * @return 设备信息列表
      */
-    @Select("SELECT * FROM equipment")
+    @Select("SELECT * FROM equipment " +
+            "join labmanage.laboratory l " +
+            "on l.lab_id = equipment.lab_id ")
+    @Results({
+            @Result(property = "equipmentId", column = "equipment_id"),
+            @Result(property = "equipmentName", column = "equipment_name"),
+            @Result(property = "model", column = "model"),
+            @Result(property = "status", column = "status"),
+            // 映射 Laboratory 对象
+            @Result(property = "lab", column = "lab_id", javaType = Laboratory.class,
+                    one = @One(select = "com.management.laboratory.mapper.LaboratoryMapper.selectLaboratoryById"))
+    })
     List<Equipment> selectAllEquipments();
 
 }
