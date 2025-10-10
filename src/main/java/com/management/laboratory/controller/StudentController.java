@@ -81,19 +81,35 @@ public class StudentController {
         }
     }
 
+    /**
+     * 获取学生信息
+     * @param studentInfo 学生信息
+     * @return 学生信息
+     */
     @RequestMapping("/studentInfo")
     public Student getStudentInfo(Map<String, String> studentInfo) {
+        // 获取学生信息
         Student student = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
+
         User user = userMapper.selectUserByUserId(Integer.parseInt(studentInfo.get("userId")));
+
+        // 设置用户信息
         student.setUserId(user.getUserId());
         student.setPassword(user.getPassword());
         student.setAccount(user.getAccount());
         student.setPermission(user.getPermission());
-        return student;
+
+        return student; // 返回学生信息
     }
 
+    /**
+     * 更新学生信息
+     * @param studentInfo 学生信息
+     * @return 更新结果
+     */
     @PostMapping("/updateStudentInfo")
     public boolean updateStudentInfo(@RequestBody Map<String, String> studentInfo) {
+        // 获取学生信息
         Student existingStudent = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
         if (existingStudent == null) {
             return false; // 学生不存在，返回false

@@ -13,6 +13,8 @@ public class Equipment {
 
     private int equipmentId;
 
+    private int labId;
+
     private String equipmentName;
 
     private String model;
@@ -22,13 +24,15 @@ public class Equipment {
     public Equipment() {
     }
 
-    public Equipment(String equipmentName, String model, boolean status){
+    public Equipment(int labId,String equipmentName, String model, boolean status){
+        this.labId = labId;
         this.equipmentName = equipmentName;
         this.model = model;
         this.status = status;
     }
 
-    public Equipment(int equipmentId, String equipmentName, String model, boolean status){
+    public Equipment(int labId,int equipmentId, String equipmentName, String model, boolean status){
+        this.labId = labId;
         this.equipmentId = equipmentId;
         this.equipmentName = equipmentName;
         this.model = model;
