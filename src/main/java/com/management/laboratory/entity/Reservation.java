@@ -17,6 +17,8 @@ public class Reservation {
 
     private int labId;
 
+    private int studentId;
+
     private String projectName;
 
     private LocalDateTime startTime;
