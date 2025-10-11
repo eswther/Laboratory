@@ -52,7 +52,7 @@ public class TeacherController {
         List<Student> students = null;
         newTeacher.setStudents(students);
 
-        if(studentMapper.selectStudentByNumber(newTeacher.getNumber()) != null) {
+        if(teacherMapper.selectTeacherByNumber(newTeacher.getNumber()) != null) {
             result1 = 2; // 教师 number 已存在
         }else { // 教师 number 不存在， 添加教师信息
             teacher = newTeacher;
@@ -63,11 +63,11 @@ public class TeacherController {
         }
         if (result0 == 1 && result1 == 1) {
             // 当两个结果都为1时，表示注册成功
-            return 1;
+            return 0;
         } else if (result1 == 2) {
             return 2; // 当result1为2时，表示教师 number 已存在
         } else {
-            return 0; // 当两个结果都不为1时，表示注册失败
+            return 1; // 当两个结果都不为1时，表示注册失败
         }
     }
 
@@ -77,7 +77,7 @@ public class TeacherController {
      * @return 教师信息
      */
     @RequestMapping("/teacherInfo")
-    public Teacher getStudentInfo(Map<String, String> teacherInfo) {
+    public Teacher getStudentInfo(@RequestBody Map<String, String> teacherInfo) {
         // 获取教师信息
         Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
 

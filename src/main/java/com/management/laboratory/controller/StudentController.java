@@ -71,13 +71,13 @@ public class StudentController {
 
         if (result0 == 1 && result1 == 1) {
             // 当两个结果都为1时，表示注册成功
-            return 1;
+            return 0;
         } else if (result1 == 2) {
             // 当result1为2时，表示number已存在
             return 2;
         } else {
             // 当两个结果都不为1时，表示注册失败
-            return 0;
+            return 1;
         }
     }
 
@@ -87,7 +87,7 @@ public class StudentController {
      * @return 学生信息
      */
     @RequestMapping("/studentInfo")
-    public Student getStudentInfo(Map<String, String> studentInfo) {
+    public Student getStudentInfo(@RequestBody Map<String, String> studentInfo) {
         // 获取学生信息
         Student student = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
 

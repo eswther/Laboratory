@@ -15,7 +15,7 @@ public class UserRecord {
 
     private int recordId;
 
-    private int reservationId;
+    private Reservation  reservation;
 
     private String notes;
 
@@ -26,16 +26,16 @@ public class UserRecord {
     public UserRecord() {
     }
 
-    public UserRecord(int reservationId, String notes, LocalDateTime startTime, LocalDateTime endTime) {
-        this.reservationId = reservationId;
+    public UserRecord(Reservation  reservation, String notes, LocalDateTime startTime, LocalDateTime endTime) {
+        this.reservation = reservation;
         this.notes = notes;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public UserRecord(int recordId, int reservationId, String notes, LocalDateTime startTime, LocalDateTime endTime) {
+    public UserRecord(int recordId, Reservation reservation, String notes, LocalDateTime startTime, LocalDateTime endTime) {
         this.recordId = recordId;
-        this.reservationId = reservationId;
+        this.reservation = reservation;
         this.notes = notes;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -45,7 +45,7 @@ public class UserRecord {
     public String toString() {
         return "Userrecord{" +
                 "recordId=" + recordId +
-                ", reservationId=" + reservationId +
+                ", reservationId=" + reservation +
                 ", notes='" + notes + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +

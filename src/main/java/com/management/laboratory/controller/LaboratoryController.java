@@ -5,6 +5,7 @@ import com.management.laboratory.mapper.EquipmentMapper;
 import com.management.laboratory.mapper.LaboratoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +39,7 @@ public class LaboratoryController {
      * @return 添加结果
      */
     @RequestMapping("/addLab")
-    public int addLab(Map<String, String> labInfo) {
+    public int addLab(@RequestBody Map<String, String> labInfo) {
 
         Laboratory laboratory = new Laboratory();
         laboratory.setLabName(labInfo.get("labName"));
@@ -58,7 +59,7 @@ public class LaboratoryController {
      * @return 删除结果
      */
     @RequestMapping("/deleteLab")
-    public int deleteLab(Map<String, String> labInfo) {
+    public int deleteLab(@RequestBody Map<String, String> labInfo) {
         int result0 = 0;
         int result1 = 0;
         result0 = equipmentMapper.deleteEquipmentByLabId(Integer.parseInt(labInfo.get("labId")));
@@ -80,7 +81,7 @@ public class LaboratoryController {
      * @return 修改结果
      */
     @RequestMapping("/updateLab")
-    public int updateLab(Map<String, String> labInfo) {
+    public int updateLab(@RequestBody Map<String, String> labInfo) {
         Laboratory laboratory = new Laboratory();
         laboratory.setLabName(labInfo.get("labName"));
         laboratory.setLocation(labInfo.get("location"));
@@ -96,7 +97,7 @@ public class LaboratoryController {
      * @return 查询结果
      */
     @RequestMapping("/selectLab")
-    public Laboratory selectLab(Map<String, String> labInfo) {
+    public Laboratory selectLab(@RequestBody Map<String, String> labInfo) {
         Laboratory laboratory = laboratoryMapper.selectLaboratoryById(Integer.parseInt(labInfo.get("labId")));
         return laboratory;
     }

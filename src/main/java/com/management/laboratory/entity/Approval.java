@@ -15,7 +15,7 @@ public class Approval {
 
     private int approvalId;
 
-    private int reservationId;
+    private Reservation reservation;
 
     private String notes;
 
@@ -26,16 +26,16 @@ public class Approval {
     public Approval() {
     }
 
-    public Approval(int reservationId, String notes, int status, LocalDateTime approvalTime) {
-        this.reservationId = reservationId;
+    public Approval(Reservation reservation, String notes, int status, LocalDateTime approvalTime) {
+        this.reservation = reservation;
         this.notes = notes;
         this.status = status;
         this.approvalTime = approvalTime;
     }
 
-    public Approval(int approvalId, int reservationId, String notes, int status, LocalDateTime approvalTime) {
+    public Approval(int approvalId, Reservation reservation, String notes, int status, LocalDateTime approvalTime) {
         this.approvalId = approvalId;
-        this.reservationId = reservationId;
+        this.reservation = reservation;
         this.notes = notes;
         this.status = status;
         this.approvalTime = approvalTime;
@@ -45,7 +45,7 @@ public class Approval {
     public String toString() {
         return "Approval{" +
                 "approvalId=" + approvalId +
-                ", reservationId=" + reservationId +
+                ", reservationId=" + reservation +
                 ", notes='" + notes + '\'' +
                 ", status=" + status +
                 ", approvalTime=" + approvalTime +
