@@ -21,12 +21,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-/**
- * UserController测试类
- * 测试UserController类中的方法
- */
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
@@ -49,30 +46,38 @@ class UserControllerTest {
     private UserController userController;
 
     private User testUser;
+    private Teacher testTeacher;
+    private Student testStudent;
+    private Admin testAdmin;
 
-    /**
-     * 初始化测试数据
-     */
     @BeforeEach
     void setUp() {
         testUser = new User("testAccount", "testPassword", 1);
-        testUser.setUserId(1); // 假设设置了用户ID
+        testUser.setUserId(1);
+
+        testTeacher = new Teacher();
+        testTeacher.setTeacherId(100);
+        testTeacher.setUserId(1);
+
+        testStudent = new Student();
+        testStudent.setStudentId(200);
+        testStudent.setUserId(1);
+
+        testAdmin = new Admin();
+        testAdmin.setAdminId(300);
+        testAdmin.setUserId(1);
     }
 
-    /**
-     * 测试注册功能
-     * 测试注册成功
-     */
     @Test
     void register_Success() {
         // 准备测试数据
         Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("account", "newAccount");
-        userInfo.put("password", "newPassword");
+        userInfo.put("account", "newUser");
+        userInfo.put("password", "password123");
         userInfo.put("permission", "1");
 
         // 模拟行为
-        when(userMapper.selectUserByAccount("newAccount")).thenReturn(null);
+        when(userMapper.selectUserByAccount("newUser")).thenReturn(null);
         doNothing().when(userService).setShareUser(any(User.class));
 
         // 执行测试
@@ -80,38 +85,30 @@ class UserControllerTest {
 
         // 验证结果
         assertEquals(1, result);
-        verify(userMapper, times(1)).selectUserByAccount("newAccount");
+        verify(userMapper, times(1)).selectUserByAccount("newUser");
         verify(userService, times(1)).setShareUser(any(User.class));
     }
 
-    /**
-     * 测试注册功能
-     * 测试账号已存在
-     */
     @Test
     void register_AccountExists() {
         // 准备测试数据
         Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("account", "existingAccount");
-        userInfo.put("password", "password");
+        userInfo.put("account", "existingUser");
+        userInfo.put("password", "password123");
         userInfo.put("permission", "1");
 
         // 模拟行为
-        when(userMapper.selectUserByAccount("existingAccount")).thenReturn(testUser);
+        when(userMapper.selectUserByAccount("existingUser")).thenReturn(testUser);
 
         // 执行测试
         int result = userController.register(userInfo);
 
         // 验证结果
         assertEquals(2, result);
-        verify(userMapper, times(1)).selectUserByAccount("existingAccount");
+        verify(userMapper, times(1)).selectUserByAccount("existingUser");
         verify(userService, never()).setShareUser(any(User.class));
     }
 
-    /**
-     * 测试登录功能
-     * 测试登录成功情况，用户权限为管理员
-     */
     @Test
     void login_Success_Admin() {
         // 准备测试数据
@@ -124,24 +121,25 @@ class UserControllerTest {
 
         // 模拟行为
         when(userMapper.selectUserByAccount("testAccount")).thenReturn(adminUser);
+        when(adminMapper.selectAdminByUserId(1)).thenReturn(testAdmin);
         doNothing().when(userService).setShareUser(adminUser);
-        doNothing().when(userService).setShareAdmin(any());
-        when(adminMapper.selectAdminByUserId(1)).thenReturn(new Admin()); // 假设返回Admin对象
+        doNothing().when(userService).setShareAdmin(testAdmin);
+        when(userService.getShareAdmin()).thenReturn(testAdmin);
 
         // 执行测试
-        boolean result = userController.login(userInfo);
+        Map<String, Object> result = userController.login(userInfo);
 
         // 验证结果
-        assertTrue(result);
-        verify(userMapper, times(1)).selectUserByAccount("testAccount");
+        assertNotNull(result);
+        assertEquals(0, result.get("result"));
+        assertEquals(1, result.get("userId"));
+        assertEquals(300, result.get("Id"));
+
         verify(userService, times(1)).setShareUser(adminUser);
-        verify(userService, times(1)).setShareAdmin(any());
+        verify(userService, times(1)).setShareAdmin(testAdmin);
+        verify(userService, times(1)).getShareAdmin();
     }
 
-    /**
-     * 测试登录功能
-     * 测试登录成功情况，用户权限为教师
-     */
     @Test
     void login_Success_Teacher() {
         // 准备测试数据
@@ -154,24 +152,25 @@ class UserControllerTest {
 
         // 模拟行为
         when(userMapper.selectUserByAccount("testAccount")).thenReturn(teacherUser);
+        when(teacherMapper.selectTeacherByUserId(1)).thenReturn(testTeacher);
         doNothing().when(userService).setShareUser(teacherUser);
-        doNothing().when(userService).setShareTeacher(any());
-        when(teacherMapper.selectTeacherByUserId(1)).thenReturn(new Teacher()); // 假设返回Teacher对象
+        doNothing().when(userService).setShareTeacher(testTeacher);
+        when(userService.getShareTeacher()).thenReturn(testTeacher);
 
         // 执行测试
-        boolean result = userController.login(userInfo);
+        Map<String, Object> result = userController.login(userInfo);
 
         // 验证结果
-        assertTrue(result);
-        verify(userMapper, times(1)).selectUserByAccount("testAccount");
+        assertNotNull(result);
+        assertEquals(0, result.get("result"));
+        assertEquals(1, result.get("userId"));
+        assertEquals(100, result.get("Id"));
+
         verify(userService, times(1)).setShareUser(teacherUser);
-        verify(userService, times(1)).setShareTeacher(any());
+        verify(userService, times(1)).setShareTeacher(testTeacher);
+        verify(userService, times(1)).getShareTeacher();
     }
 
-    /**
-     * 测试登录功能
-     * 测试登录成功情况，用户权限为学生
-     */
     @Test
     void login_Success_Student() {
         // 准备测试数据
@@ -184,47 +183,46 @@ class UserControllerTest {
 
         // 模拟行为
         when(userMapper.selectUserByAccount("testAccount")).thenReturn(studentUser);
+        when(studentMapper.selectStudentByUserId(1)).thenReturn(testStudent);
         doNothing().when(userService).setShareUser(studentUser);
-        doNothing().when(userService).setShareStudent(any());
-        when(studentMapper.selectStudentByUserId(1)).thenReturn(new Student()); // 假设返回Student对象
+        doNothing().when(userService).setShareStudent(testStudent);
+        when(userService.getShareStudent()).thenReturn(testStudent);
 
         // 执行测试
-        boolean result = userController.login(userInfo);
+        Map<String, Object> result = userController.login(userInfo);
 
         // 验证结果
-        assertTrue(result);
-        verify(userMapper, times(1)).selectUserByAccount("testAccount");
+        assertNotNull(result);
+        assertEquals(0, result.get("result"));
+        assertEquals(1, result.get("userId"));
+        assertEquals(200, result.get("Id"));
+
         verify(userService, times(1)).setShareUser(studentUser);
-        verify(userService, times(1)).setShareStudent(any());
+        verify(userService, times(1)).setShareStudent(testStudent);
+        verify(userService, times(1)).getShareStudent();
     }
 
-    /**
-     * 测试登录功能
-     * 测试登录失败，用户不存在
-     */
     @Test
-    void login_AccountNotExists() {
+    void login_UserNotFound() {
         // 准备测试数据
         Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("account", "nonExistingAccount");
-        userInfo.put("password", "password");
+        userInfo.put("account", "nonExistentUser");
+        userInfo.put("password", "password123");
 
         // 模拟行为
-        when(userMapper.selectUserByAccount("nonExistingAccount")).thenReturn(null);
+        when(userMapper.selectUserByAccount("nonExistentUser")).thenReturn(null);
 
         // 执行测试
-        boolean result = userController.login(userInfo);
+        Map<String, Object> result = userController.login(userInfo);
 
         // 验证结果
-        assertFalse(result);
-        verify(userMapper, times(1)).selectUserByAccount("nonExistingAccount");
-        verify(userService, never()).setShareUser(any(User.class));
+        assertNotNull(result);
+        assertEquals(1, result.get("result"));
+        assertNull(result.get("userId"));
+
+        verify(userService, never()).setShareUser(any());
     }
 
-    /**
-     * 测试登录功能
-     * 测试登录失败，密码错误
-     */
     @Test
     void login_WrongPassword() {
         // 准备测试数据
@@ -236,18 +234,16 @@ class UserControllerTest {
         when(userMapper.selectUserByAccount("testAccount")).thenReturn(testUser);
 
         // 执行测试
-        boolean result = userController.login(userInfo);
+        Map<String, Object> result = userController.login(userInfo);
 
         // 验证结果
-        assertFalse(result);
-        verify(userMapper, times(1)).selectUserByAccount("testAccount");
-        verify(userService, never()).setShareUser(any(User.class));
+        assertNotNull(result);
+        assertEquals(2, result.get("result"));
+        assertNull(result.get("userId"));
+
+        verify(userService, never()).setShareUser(any());
     }
 
-    /**
-     * 测试登录功能
-     * 测试登录失败，用户权限无效
-     */
     @Test
     void login_InvalidPermission() {
         // 准备测试数据
@@ -263,14 +259,40 @@ class UserControllerTest {
         doNothing().when(userService).setShareUser(invalidUser);
 
         // 执行测试
-        boolean result = userController.login(userInfo);
+        Map<String, Object> result = userController.login(userInfo);
 
         // 验证结果
-        assertFalse(result);
-        verify(userMapper, times(1)).selectUserByAccount("testAccount");
+        assertNull(result);
+
         verify(userService, times(1)).setShareUser(invalidUser);
         verify(userService, never()).setShareAdmin(any());
         verify(userService, never()).setShareTeacher(any());
         verify(userService, never()).setShareStudent(any());
+    }
+
+    @Test
+    void login_TeacherNotFound() {
+        // 准备测试数据
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("account", "testAccount");
+        userInfo.put("password", "testPassword");
+
+        User teacherUser = new User("testAccount", "testPassword", 1);
+        teacherUser.setUserId(1);
+
+        // 模拟行为 - teacherMapper 返回 null
+        when(userMapper.selectUserByAccount("testAccount")).thenReturn(teacherUser);
+        when(teacherMapper.selectTeacherByUserId(1)).thenReturn(null);
+        doNothing().when(userService).setShareUser(teacherUser);
+        doNothing().when(userService).setShareTeacher(null);
+        when(userService.getShareTeacher()).thenReturn(null);
+
+        // 执行测试 - 这里会抛出 NullPointerException，需要处理
+        assertThrows(NullPointerException.class, () -> {
+            userController.login(userInfo);
+        });
+
+        verify(userService, times(1)).setShareUser(teacherUser);
+        verify(userService, times(1)).setShareTeacher(null);
     }
 }

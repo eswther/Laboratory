@@ -27,19 +27,18 @@ public interface StudentMapper {
      * @return 学生信息
      */
     @Select("SELECT s.student_id, s.user_id, s.name, s.department, s.number, s.major," +
-            "       t.teacher_id, t.user_id, t.name, t.number, t.department " +
+            "       s.teacher_id " +  // 只获取teacher_id用于关联查询
             "FROM student s " +
-            "LEFT JOIN teacher t ON s.teacher_id = t.teacher_id " +
             "WHERE s.user_id = #{userId}")
     @Results({
-            @Result(property = "id", column = "student_id"),
+            @Result(property = "studentId", column = "student_id"),
             @Result(property = "userId", column = "user_id"),
             @Result(property = "name", column = "name"),
             @Result(property = "department", column = "department"),
             @Result(property = "number", column = "number"),
             @Result(property = "major", column = "major"),
-            @Result(property = "teacher", column = "teacher_id", javaType = Teacher.class,
-                    one = @One(resultMap = "com.management.laboratory.mapper.TeacherMapper.selectTeacherById"))
+            @Result(property = "teacher", column = "teacher_id",
+                    one = @One(select = "com.management.laboratory.mapper.TeacherMapper.selectByTeacherId0"))
     })
     Student selectStudentByUserId(int userId);
 
@@ -60,6 +59,45 @@ public interface StudentMapper {
             @Result(property = "major", column = "major")
     })
     Student selectStudentByUserId0(int userId);
+
+    /**
+     * 根据学生id查询学生信息
+     * @param studentId 学生id
+     * @return 学生信息
+     */
+    @Select("SELECT s.student_id, s.user_id, s.name, s.department, s.number, s.major " +
+            "FROM student s " +
+            "WHERE s.student_id = #{studentId}")
+    @Results({
+            @Result(property = "id", column = "student_id"),
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "name", column = "name"),
+            @Result(property = "department", column = "department"),
+            @Result(property = "number", column = "number"),
+            @Result(property = "major", column = "major")
+    })
+    Student selectStudentById0(int studentId);
+
+    /**
+     * 根据学生id查询学生信息
+     * @param studentId 学生id
+     * @return 学生信息
+     */
+    @Select("SELECT s.student_id, s.user_id, s.name, s.department, s.number, s.major," +
+            "       s.teacher_id " +  // 只获取teacher_id用于关联查询
+            "FROM student s " +
+            "WHERE s.student_id= #{studentId}")
+    @Results({
+            @Result(property = "studentId", column = "student_id"),
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "name", column = "name"),
+            @Result(property = "department", column = "department"),
+            @Result(property = "number", column = "number"),
+            @Result(property = "major", column = "major"),
+            @Result(property = "teacher", column = "teacher_id",
+                    one = @One(select = "com.management.laboratory.mapper.TeacherMapper.selectByTeacherId0"))
+    })
+    Student selectStudentById(int studentId);
 
     /**
      * 插入学生信息

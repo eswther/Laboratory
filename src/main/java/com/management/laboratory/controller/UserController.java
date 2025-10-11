@@ -1,4 +1,5 @@
 package com.management.laboratory.controller;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.management.laboratory.entity.User;
 import com.management.laboratory.mapper.AdminMapper;
 import com.management.laboratory.mapper.StudentMapper;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -63,32 +65,46 @@ public class UserController {
      * @return 登录结果
      */
     @PostMapping("/login")
-    public boolean login(@RequestBody Map<String, String> userInfo) {
+    public Map<String, Object> login(@RequestBody Map<String, String> userInfo) {
+        Map<String, Object> map = new HashMap<>();
         // 跟据用户输入的账号和密码，从数据库中查询用户信息
         User loginUser = userMapper.selectUserByAccount(userInfo.get("account"));
 
 
         if (loginUser == null){
-            return false; // 如果查询结果为空，则返回false，表示用户不存在。
+            map.put("result", 1);
+            map.put("userId", null);
+            return map; // 如果查询结果为空，则返回false，表示用户不存在。
         }else if (!loginUser.getPassword().equals(userInfo.get("password"))){
-            return false; // 如果密码不匹配，则返回false，表示登录失败。
+            map.put("result", 2);
+            map.put("userId", null);
+            return map; // 如果密码不匹配，则返回false，表示登录失败。
         }else { // 如果用户名和密码都匹配，则继续进行登录操作。
             userService.setShareUser(loginUser);
 
             switch (loginUser.getPermission()){
                 case 0: // 如果用户权限为0，则将用户信息保存到Admin对象中。
                     userService.setShareAdmin(adminMapper.selectAdminByUserId(loginUser.getUserId()));
+                    map.put("result", 0);
+                    map.put("userId", loginUser.getUserId());
+                    map.put("Id", userService.getShareAdmin().getAdminId());
                     break;
                 case 1: // 如果用户权限为1，则将用户信息保存到Teacher对象中。
                     userService.setShareTeacher(teacherMapper.selectTeacherByUserId(loginUser.getUserId()));
+                    map.put("result", 0);
+                    map.put("userId", loginUser.getUserId());
+                    map.put("Id", userService.getShareTeacher().getTeacherId());
                     break;
                 case 2: // 如果用户权限为2，则将用户信息保存到Student对象中。
                     userService.setShareStudent(studentMapper.selectStudentByUserId(loginUser.getUserId()));
+                    map.put("result", 0);
+                    map.put("userId", loginUser.getUserId());
+                    map.put("Id", userService.getShareStudent().getStudentId());
                     break;
                 default:
-                    return false;
+                    return null;
             }
         }
-        return true; // 返回登录结果。
+        return map; // 返回登录结果。
     }
 }
