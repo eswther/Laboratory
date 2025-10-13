@@ -61,6 +61,7 @@ public interface LaboratoryMapper {
     @Update("UPDATE laboratory " +
             "SET lab_name = #{labName}, location = #{location}, capacity = #{capacity}, open_Time = #{openTime}, close_Time = #{closeTime} " +
             "WHERE lab_id = #{labId}")
+    @Options(useGeneratedKeys = true, keyProperty = "laboratoryId", keyColumn = "laboratory_id")
     int updateLaboratory(Laboratory laboratory);
 
     /**
@@ -104,6 +105,14 @@ public interface LaboratoryMapper {
     @Select("SELECT * FROM laboratory")
     @ResultMap("laboratoryWithEquipmentsMap")
     List<Laboratory> selectAllLaboratories();
+
+    /**
+     * 获取实验室容量
+     * @param labId 实验室 id
+     * @return 实验室容量
+     */
+    @Select("SELECT capacity FROM laboratory WHERE lab_id = #{labId}")
+    int getCapacity(int labId);
 
 
 }

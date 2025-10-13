@@ -86,6 +86,7 @@ public interface TeacherMapper {
      * @return 更新结果
      */
     @Update("UPDATE teacher SET department = #{department}, name = #{name}, number = #{number} WHERE teacher_id = #{teacherId}")
+    @Options(useGeneratedKeys = true, keyProperty = "teacherId", keyColumn = "teacher_id")
     public int updateTeacher(Teacher teacher);
 
 }

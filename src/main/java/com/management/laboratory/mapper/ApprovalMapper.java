@@ -2,6 +2,7 @@ package com.management.laboratory.mapper;
 
 import com.management.laboratory.entity.Approval;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -24,4 +25,15 @@ public interface ApprovalMapper {
             "JOIN reservation r  ON r.reservation_Id = a.reservation_Id " +
             "WHERE r.student_Id = #{studentId}")
     List<Approval> selectApprovalsByStudentId(int studentId);
+
+    /**
+     * 添加审批信息
+     * @param approval 审批信息
+     * @return 影响的行数
+     */
+    @Select("INSERT INTO approval (reservation_id, notes, approval_time, status) " +
+            "VALUES (#{reservation.reservationId}, #{notes}, #{approvalTime}, #{status})")
+    @Options(useGeneratedKeys = true, keyProperty = "approvalId", keyColumn = "approval_id")
+    int insertApproval(Approval approval);
+
 }

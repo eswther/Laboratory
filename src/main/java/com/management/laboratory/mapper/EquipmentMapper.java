@@ -142,4 +142,15 @@ public interface EquipmentMapper {
             "JOIN laboratory l ON e.lab_id = l.lab_id ")
     @ResultMap("equipmentWithLabMap")
     List<Equipment> selectAllEquipments();
+
+    /**
+     * 更新设备状态
+     * @param equipment 设备信息（包含设备 id 和新状态）
+     * @return 更新结果
+     */
+    @Update("UPDATE equipment " +
+            "SET status = #{status} " +
+            "WHERE equipment_id = #{equipmentId}")
+    @Options(useGeneratedKeys = true, keyProperty = "equipmentId", keyColumn = "equipment_id")
+    int updateEquipmentStatus(Equipment equipment);
 }

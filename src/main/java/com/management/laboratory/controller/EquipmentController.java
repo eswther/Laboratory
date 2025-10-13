@@ -81,4 +81,19 @@ public class EquipmentController {
     public Equipment selectEquipment(@RequestBody Map<String, String> equipInfo) {
         return equipmentMapper.selectEquipmentById(Integer.parseInt(equipInfo.get("equipmentId")));
     }
+
+    /**
+     * 更新设备状态
+     * @param equipmentId 设备 ID
+     * @param status 设备状态
+     * @return 更新结果
+     */
+    @RequestMapping("/updateEquipmentStatus")
+    public int updateEquipmentStatus(int equipmentId, boolean status) {
+        Equipment equipment = equipmentMapper.selectEquipmentById(equipmentId);
+        equipment.setStatus(status);
+        return equipmentMapper.updateEquipment(equipment);
+    }
+
+
 }

@@ -130,6 +130,7 @@ public interface StudentMapper {
             "major = #{major}, " +
             "teacher_id = #{teacher.getTeacherId()} " +
             "WHERE student_id = #{studentId}")
+    @Options(useGeneratedKeys = true, keyProperty = "studentId", keyColumn = "student_id")
     public int updateStudent(Student student);
 
 }

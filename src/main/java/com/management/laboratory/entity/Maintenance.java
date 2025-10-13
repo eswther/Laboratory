@@ -15,7 +15,7 @@ public class Maintenance {
 
     private int maintenanceId;
 
-    private Equipment  equipment;
+    private Equipment equipment;
 
     private LocalDateTime reportTime;
 
