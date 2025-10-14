@@ -17,6 +17,8 @@ public class UserRecord {
 
     private Reservation  reservation;
 
+    private Student student;
+
     private String notes;
 
     private LocalDateTime startTime;

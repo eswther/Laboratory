@@ -81,8 +81,6 @@ public class ReservationController {
 
             //验证是否在开放时间内
             Laboratory laboratory = laboratoryMapper.selectLaboratoryById0(labId);
-            startTime.toLocalTime();
-            endTime.toLocalTime();
             if (startTime.toLocalTime().isBefore(laboratory.getOpenTime()) ||
                     endTime.toLocalTime().isAfter(laboratory.getCloseTime())) {
                 return -2; // 不在开放时间内
