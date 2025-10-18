@@ -51,7 +51,7 @@ public interface StudentMapper {
             "FROM student s " +
             "WHERE s.user_id = #{userId}")
     @Results({
-            @Result(property = "id", column = "student_id"),
+            @Result(property = "studentId", column = "student_id"),
             @Result(property = "userId", column = "user_id"),
             @Result(property = "name", column = "name"),
             @Result(property = "department", column = "department"),

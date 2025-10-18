@@ -63,10 +63,10 @@ public class LaboratoryController {
         int result0 = 0;
         int result1 = 0;
         result0 = equipmentMapper.deleteEquipmentByLabId(Integer.parseInt(labInfo.get("labId")));
-        result0 = laboratoryMapper.deleteLaboratory(Integer.parseInt(labInfo.get("labId")));
-        if (result0 == 1 && result1 == 1){
+        result1 = laboratoryMapper.deleteLaboratory(Integer.parseInt(labInfo.get("labId")));
+        if (result1 == 1){
             return 0;// 删除成功
-        }else if(result0 == 0 && result1 == 1){
+        }else if(result0 == 0 && result1 == 0){
             return 1;// 删除设备失败
         }else if(result1 == 0){
             return 2;// 删除实验室失败
@@ -83,6 +83,7 @@ public class LaboratoryController {
     @RequestMapping("/updateLab")
     public int updateLab(@RequestBody Map<String, String> labInfo) {
         Laboratory laboratory = new Laboratory();
+        laboratory.setLabId(Integer.parseInt(labInfo.get("labId")));
         laboratory.setLabName(labInfo.get("labName"));
         laboratory.setLocation(labInfo.get("location"));
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));

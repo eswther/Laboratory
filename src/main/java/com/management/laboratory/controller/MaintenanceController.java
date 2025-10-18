@@ -41,7 +41,9 @@ public class MaintenanceController {
         Maintenance maintenance = new Maintenance();
         Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
         equipment.setStatus(false); // 设备状态设为维修中
-        equipmentMapper.updateEquipment(equipment);
+        if(equipmentMapper.updateEquipment(equipment)!=1){;
+            return 2; // 设备状态更新失败
+        }
         maintenance.setEquipment(equipment);
         maintenance.setReportTime(LocalDateTime.parse(maintenanceInfo.get("reportTime"), localDateTimeFormatter));
         maintenance.setNotes(maintenanceInfo.get("notes"));
@@ -56,8 +58,14 @@ public class MaintenanceController {
     @RequestMapping("/updateMaintenance")
     public int updateMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = maintenanceMapper.selectMaintenanceById(Integer.parseInt(maintenanceInfo.get("maintenanceId")));
+        if (maintenance == null){
+            return 2; // 维修信息不存在
+        }
         if (maintenanceInfo.containsKey("equipmentId")) {
             Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
+            if (equipment == null){
+                return 3; // 设备不存在
+            }
             maintenance.setEquipment(equipment);
         }
         if (maintenanceInfo.containsKey("reportTime")) {
@@ -69,10 +77,18 @@ public class MaintenanceController {
         if (maintenanceInfo.containsKey("status")) {
             int newStatus = Integer.parseInt(maintenanceInfo.get("status"));
             // 如果状态从维修中变为已修复，更新设备状态
-            if (maintenance.getStatus() == 0 && newStatus == 1) {
+            if (maintenance.getStatus() == 1 && newStatus == 2) {
                 Equipment equipment = maintenance.getEquipment();
                 equipment.setStatus(true); // 设备状态设为可用
-                equipmentMapper.updateEquipment(equipment);
+                if(equipmentMapper.updateEquipment(equipment)!=1){;
+                    return 4; // 设备状态更新失败
+                }
+            }else if(maintenance.getStatus() == 2 && newStatus == 0){
+                Equipment equipment = maintenance.getEquipment();
+                equipment.setStatus(false); // 设备状态设为可用
+                if(equipmentMapper.updateEquipment(equipment)!=1){;
+                    return 4; // 设备状态更新失败
+                }
             }
             maintenance.setStatus(newStatus);
         }
@@ -86,11 +102,25 @@ public class MaintenanceController {
     @RequestMapping("/updateMaintenanceStatus")
     public int updateMaintenanceStatus(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = maintenanceMapper.selectMaintenanceById(Integer.parseInt(maintenanceInfo.get("maintenanceId")));
+        if (maintenance == null){
+            return 2; // 维修信息不存在
+        }
         Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
+        if (equipment == null){
+            return 3; // 设备不存在
+        }
+        maintenance.setEquipment(equipment);
         int newStatus = Integer.parseInt(maintenanceInfo.get("status"));
-        if (maintenance.getStatus() == 0 && newStatus == 2) {
+        if (maintenance.getStatus() == 1 && newStatus == 2) {
             equipment.setStatus(true); // 设备状态设为可用
-            equipmentMapper.updateEquipmentStatus(equipment);
+            if(equipmentMapper.updateEquipment(equipment)!=1){;
+                return 4; // 设备状态更新失败
+            }
+        }else if(maintenance.getStatus() == 2 && newStatus == 0){
+            equipment.setStatus(false); // 设备状态设为可用
+            if(equipmentMapper.updateEquipment(equipment)!=1){;
+                return 4; // 设备状态更新失败
+            }
         }
         maintenance.setStatus(newStatus); // 设备状态设为维修中
         return  maintenanceMapper.updateMaintenanceStatus(maintenance.getMaintenanceId(), maintenance.getStatus());

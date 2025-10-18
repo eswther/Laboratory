@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,10 +37,10 @@ public class TeacherController {
      * @return 1: 注册成功 2: 账号已存在 0: 注册失败
      */
     @RequestMapping("/register/teacher")
-    public int register(@RequestBody Map<String, String> teacherInfo){
+    public Map<String , String> register(@RequestBody Map<String, String> teacherInfo){
         // 从userService中获取用户信息
         User shareUser = userService.getShareUser();
-
+        Map<String , String> resultMap = new HashMap<>();
         // 创建教师对象
         Teacher newTeacher = new Teacher(shareUser.getAccount(), shareUser.getPassword(),
                 shareUser.getPermission(), teacherInfo.get("department"),
@@ -63,11 +64,18 @@ public class TeacherController {
         }
         if (result0 == 1 && result1 == 1) {
             // 当两个结果都为1时，表示注册成功
-            return 0;
+            resultMap.put("result", "0");
+            resultMap.put("userId", String.valueOf(userService.getShareUser().getUserId()));
+            resultMap.put("Id", String.valueOf(userService.getShareTeacher().getTeacherId()));
+            return resultMap;
         } else if (result1 == 2) {
-            return 2; // 当result1为2时，表示教师 number 已存在
+            resultMap.put("result", "2");
+            // 当result1为2时，表示number已存在
+            return resultMap; // 当result1为2时，表示教师 number 已存在
         } else {
-            return 1; // 当两个结果都不为1时，表示注册失败
+            resultMap.put("result", "1");
+            // 当两个结果都不为1时，表示注册失败
+            return resultMap; // 当两个结果都不为1时，表示注册失败
         }
     }
 
@@ -98,10 +106,10 @@ public class TeacherController {
      * @return 更新结果
      */
     @PostMapping("/updateTeacherInfo")
-    public boolean updateStudentInfo(@RequestBody Map<String, String> teacherInfo) {
+    public int updateStudentInfo(@RequestBody Map<String, String> teacherInfo) {
         Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
         if (teacher == null) {
-            return false; // 学生不存在，返回false
+            return 0; // 教师不存在，返回false
         }
 
         // 更新学生信息
@@ -111,6 +119,6 @@ public class TeacherController {
 
         // 这里假设有一个方法可以更新学生信息到数据库中
         int updateResult = teacherMapper.updateTeacher(teacher);
-        return updateResult == 1; // 返回更新是否成功
+        return updateResult; // 返回更新是否成功
     }
 }

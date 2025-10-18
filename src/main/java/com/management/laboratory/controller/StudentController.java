@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -36,10 +37,10 @@ public class StudentController {
      * @return 1: 注册成功 2: 账号已存在 0: 注册失败
      */
     @RequestMapping("/register/student")
-    public int register(@RequestBody Map<String, String> studentInfo){
+    public Map<String , String> register(@RequestBody Map<String, String> studentInfo){
         // 从userService中获取用户信息
         User shareUser = userService.getShareUser();
-
+        Map<String , String> resultMap = new HashMap<>();
         // 创建学生对象
         Student newStudent = new Student(shareUser.getAccount(), shareUser.getPassword(),
                 shareUser.getPermission(), studentInfo.get("major"),
@@ -56,7 +57,10 @@ public class StudentController {
             // 从数据库中获取教师信息
             Teacher teacher = teacherMapper.selectTeacherById(Integer.parseInt(studentInfo.get("teacherId")));
 
-            if (teacher == null) return 3; // 当教师不存在时，返回3
+            if (teacher == null) {
+                resultMap.put("result", "3");
+                return resultMap;
+            } // 当教师不存在时，返回3
 
             // 设置学生的指导教师
             newStudent.setTeacher(teacher);
@@ -71,13 +75,18 @@ public class StudentController {
 
         if (result0 == 1 && result1 == 1) {
             // 当两个结果都为1时，表示注册成功
-            return 0;
+            resultMap.put("result", "0");
+            resultMap.put("userId", String.valueOf(userService.getShareUser().getUserId()));
+            resultMap.put("Id", String.valueOf(userService.getShareStudent().getStudentId()));
+            return resultMap;
         } else if (result1 == 2) {
+            resultMap.put("result", "2");
             // 当result1为2时，表示number已存在
-            return 2;
+            return resultMap;
         } else {
+            resultMap.put("result", "1");
             // 当两个结果都不为1时，表示注册失败
-            return 1;
+            return resultMap;
         }
     }
 
@@ -108,11 +117,11 @@ public class StudentController {
      * @return 更新结果
      */
     @PostMapping("/updateStudentInfo")
-    public boolean updateStudentInfo(@RequestBody Map<String, String> studentInfo) {
+    public int updateStudentInfo(@RequestBody Map<String, String> studentInfo) {
         // 获取学生信息
         Student existingStudent = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
         if (existingStudent == null) {
-            return false; // 学生不存在，返回false
+            return 0; // 学生不存在，返回false
         }
 
         // 更新学生信息
@@ -123,7 +132,7 @@ public class StudentController {
 
         // 这里假设有一个方法可以更新学生信息到数据库中
         int updateResult = studentMapper.updateStudent(existingStudent);
-        return updateResult == 1; // 返回更新是否成功
+        return updateResult; // 返回更新是否成功
     }
 
 

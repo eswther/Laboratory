@@ -11,8 +11,28 @@ public interface MaintenanceMapper {
      * 获取所有维修信息
      * @return 维修信息列表
      */
-    @Select("SELECT * FROM maintenance")
+    @Select("SELECT m.maintenance_id, m.equipment_id, m.report_time, m.notes, m.status, " +
+            "       e.equipment_id, e.name AS equipment_name, e.model AS equipment_model, e.status AS equipment_status, " +
+            "       l.lab_id, l.name AS lab_name, l.location AS lab_location " +
+            "FROM maintenance m " +
+            "JOIN equipment e ON m.equipment_id = e.equipment_id " +
+            "JOIN laboratory l ON e.lab_id = l.lab_id ")
+    @Results({
+            @Result(property = "maintenanceId", column = "maintenance_id"),
+            @Result(property = "reportTime", column = "report_time"),
+            @Result(property = "notes", column = "notes"),
+            @Result(property = "status", column = "status"),
+            @Result(property = "equipment.equipmentId", column = "equipment_id"),
+            @Result(property = "equipment.equipmentName", column = "equipment_name"),
+            @Result(property = "equipment.model", column = "equipment_model"),
+            @Result(property = "equipment.status", column = "equipment_status"),
+            @Result(property = "equipment.lab.labId", column = "lab_id"),
+            @Result(property = "equipment.lab.name", column = "lab_name"),
+            @Result(property = "equipment.lab.location", column = "lab_location")
+    })
     List<Maintenance> selectAllMaintenances();
+
+
 
     /**
      * 根据维保id获取维修信息

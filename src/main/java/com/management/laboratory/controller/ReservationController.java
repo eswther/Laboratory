@@ -34,6 +34,16 @@ public class ReservationController {
     }
 
     /**
+     * 获取所有该教师的学生预约信息待审核
+     * @return 预约信息列表
+     */
+    @RequestMapping("/getAllReservationsOfTeacherByStatus")
+    public List<Reservation> getAllReservationsOfTeacherByStatus(@RequestBody Map<String, String> teacherInfo) {
+        return reservationMapper.selectAllReservationsByTeacherByStatus(Integer.parseInt(teacherInfo.get("teacherId")),
+                Integer.parseInt(teacherInfo.get("status")));
+    }
+
+    /**
      * 获取所有预约信息
      * @return 预约信息列表
      */
@@ -51,6 +61,17 @@ public class ReservationController {
     @RequestMapping("/getReservationsByStudentId")
     public List<Reservation> getReservationsByStudentId(@RequestBody Map<String, String> studentInfo) {
         return reservationMapper.selectReservationsByStudentId(Integer.parseInt(studentInfo.get("studentId")));
+    }
+
+    /**
+     * 根据学生ID获取该学生的所有预约信息
+     * @param studentInfo 学生信息
+     * @return 该学生的预约信息列表
+     */
+    @RequestMapping("/getReservationsByStudentIdByStatus")
+    public List<Reservation> getReservationsByStudentIdByStatus(@RequestBody Map<String, String> studentInfo) {
+        return reservationMapper.selectReservationsByStudentIdByStatus(Integer.parseInt(studentInfo.get("studentId"))
+                ,Integer.parseInt(studentInfo.get("status")));
     }
 
     /**
@@ -88,7 +109,7 @@ public class ReservationController {
 
             // 检查实验室容量
             if (!checkLabCapacity(labId, startTime, endTime)) {
-                return 0; // 容量不足
+                return -3; // 容量不足
             }
 
             // 创建预约记录

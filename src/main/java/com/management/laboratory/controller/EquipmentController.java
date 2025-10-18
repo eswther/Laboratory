@@ -40,6 +40,9 @@ public class EquipmentController {
     public int addEquipment(@RequestBody Map<String, String> equipInfo) {
         Equipment equipment = new Equipment();
         equipment.setLab(laboratoryMapper.selectLaboratoryById0(Integer.parseInt(equipInfo.get("labId"))));
+        if (equipment.getLab() == null) {
+            return 2; // 实验室不存在
+        }
         equipment.setEquipmentName(equipInfo.get("equipmentName"));
         equipment.setStatus(Boolean.parseBoolean(equipInfo.get("status")));
         equipment.setModel(equipInfo.get("model"));
@@ -65,7 +68,11 @@ public class EquipmentController {
     @RequestMapping("/updateEquipment")
     public int updateEquipment(@RequestBody Map<String, String> equipInfo) {
         Equipment equipment = new Equipment();
+        equipment.setEquipmentId(Integer.parseInt(equipInfo.get("equipmentId")));
         equipment.setLab(laboratoryMapper.selectLaboratoryById0(Integer.parseInt(equipInfo.get("labId"))));
+        if (equipment.getLab() == null) {
+            return 2; // 实验室不存在
+        }
         equipment.setEquipmentName(equipInfo.get("equipmentName"));
         equipment.setStatus(Boolean.parseBoolean(equipInfo.get("status")));
         equipment.setModel(equipInfo.get("model"));
@@ -84,16 +91,16 @@ public class EquipmentController {
 
     /**
      * 更新设备状态
-     * @param equipmentId 设备 ID
-     * @param status 设备状态
+     * @param equipInfo 设备信息
      * @return 更新结果
      */
     @RequestMapping("/updateEquipmentStatus")
-    public int updateEquipmentStatus(int equipmentId, boolean status) {
-        Equipment equipment = equipmentMapper.selectEquipmentById(equipmentId);
-        equipment.setStatus(status);
+    public int updateEquipmentStatus(@RequestBody Map<String, String> equipInfo) {
+        Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(equipInfo.get("equipmentId")));
+        equipment.setStatus(Boolean.parseBoolean(equipInfo.get("status")));
         return equipmentMapper.updateEquipment(equipment);
     }
+
 
 
 }

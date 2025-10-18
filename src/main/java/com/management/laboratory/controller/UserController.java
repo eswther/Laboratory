@@ -74,10 +74,12 @@ public class UserController {
         if (loginUser == null){
             map.put("result", 1);
             map.put("userId", null);
+            map.put("Id", null);
             return map; // 如果查询结果为空，则返回false，表示用户不存在。
         }else if (!loginUser.getPassword().equals(userInfo.get("password"))){
             map.put("result", 2);
             map.put("userId", null);
+            map.put("Id", null);
             return map; // 如果密码不匹配，则返回false，表示登录失败。
         }else { // 如果用户名和密码都匹配，则继续进行登录操作。
             userService.setShareUser(loginUser);
@@ -107,4 +109,27 @@ public class UserController {
         }
         return map; // 返回登录结果。
     }
+
+    /**
+     * 更新用户信息
+     * @param userInfo 用户信息
+     * @return 更新结果
+     */
+    @PostMapping("/updateUserInfo")
+    public int updateUserInfo(@RequestBody Map<String, String> userInfo) {
+        User existingUser = userMapper.selectUserByUserId(Integer.parseInt(userInfo.get("userId")));
+
+        if (existingUser == null) {
+            return 0; // 用户不存在，返回false
+        }
+        if(userMapper.selectUserByAccount(existingUser.getAccount()) != null) {
+            return  2; // 将返回值设置为2，表示账号已存在
+        }
+        // 更新用户信息
+        existingUser.setAccount(userInfo.get("account"));
+        existingUser.setPassword(userInfo.get("password"));
+
+        return userMapper.updateUser(existingUser); // 返回更新结果
+    }
+
 }

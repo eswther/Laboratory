@@ -39,5 +39,13 @@ public interface UserMapper {
     @Options(useGeneratedKeys = true, keyProperty = "userId", keyColumn = "user_id")
     int insertUser(User user);
 
+    /**
+     * 更新用户信息
+     * @param user 用户信息
+     * @return 更新成功返回1
+     */
+    @Insert("UPDATE user SET account = #{account}, password = #{password} WHERE user_id = #{userId}")
+    int updateUser(User user);
+
 
 }
