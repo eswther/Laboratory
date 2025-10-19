@@ -3,6 +3,8 @@ package com.management.laboratory.mapper;
 import com.management.laboratory.entity.Teacher;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 /**
  * 教师信息映射类
  * 将教师信息保存在数据库中
@@ -41,6 +43,13 @@ public interface TeacherMapper {
     @Select("SELECT * FROM teacher WHERE user_id = #{userId}")
     public Teacher selectTeacherByUserI0(int userId);
 
+    /**
+     * 查询所有教师信息
+     * @return 教师信息列表
+     */
+    @Select("SELECT t.teacher_id, t.user_id, t.name, t.department, t.number "+// 只获取teacher_id用于关联查询
+            "FROM teacher t ")
+    public List<Teacher> selectAllTeachers();
     /**
      * 根据 user_id 查询教师信息
      * @param userId 教师 user_id

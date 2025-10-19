@@ -121,4 +121,13 @@ public class TeacherController {
         int updateResult = teacherMapper.updateTeacher(teacher);
         return updateResult; // 返回更新是否成功
     }
+
+    /**
+     * 获取所有教师信息
+     * @return 教师信息列表
+     */
+    @RequestMapping("/getAllTeachers")
+    public List<Teacher> getAllTeachers() {
+        return teacherMapper.selectAllTeachers();
+    }
 }
