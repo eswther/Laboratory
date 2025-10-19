@@ -44,6 +44,8 @@ public class MaintenanceController {
     public int addMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = new Maintenance();
         Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
+
+        // 查询状态
         if (equipment == null){
             return 3; // 设备不存在
         }
@@ -55,11 +57,14 @@ public class MaintenanceController {
         if (user == null){
             return 4; // 用户不存在
         }
+
+        // 添加维修信息
         maintenance.setEquipment(equipment);
         maintenance.setUser(user);
         maintenance.setReportTime(LocalDateTime.parse(maintenanceInfo.get("reportTime"), localDateTimeFormatter));
         maintenance.setNotes(maintenanceInfo.get("notes"));
         maintenance.setStatus(Integer.parseInt(maintenanceInfo.get("status")));
+
         return maintenanceMapper.insertMaintenance(maintenance);
     }
 
@@ -70,6 +75,8 @@ public class MaintenanceController {
     @RequestMapping("/updateMaintenance")
     public int updateMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = maintenanceMapper.selectMaintenanceById(Integer.parseInt(maintenanceInfo.get("maintenanceId")));
+
+        // 特殊状态
         if (maintenance == null){
             return 2; // 维修信息不存在
         }
@@ -80,6 +87,8 @@ public class MaintenanceController {
             }
             maintenance.setEquipment(equipment);
         }
+
+        // 更新信息
         if (maintenanceInfo.containsKey("reportTime")) {
             maintenance.setReportTime(LocalDateTime.parse(maintenanceInfo.get("reportTime"), localDateTimeFormatter));
         }
@@ -104,6 +113,7 @@ public class MaintenanceController {
             }
             maintenance.setStatus(newStatus);
         }
+
         return maintenanceMapper.updateMaintenance(maintenance);
     }
 
@@ -114,6 +124,8 @@ public class MaintenanceController {
     @RequestMapping("/updateMaintenanceStatus")
     public int updateMaintenanceStatus(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = maintenanceMapper.selectMaintenanceById(Integer.parseInt(maintenanceInfo.get("maintenanceId")));
+
+        // 特殊状态
         if (maintenance == null){
             return 2; // 维修信息不存在
         }
@@ -121,6 +133,7 @@ public class MaintenanceController {
         if (equipment == null){
             return 3; // 设备不存在
         }
+
         maintenance.setEquipment(equipment);
         int newStatus = Integer.parseInt(maintenanceInfo.get("status"));
         if (maintenance.getStatus() == 1 && newStatus == 2) {
@@ -135,6 +148,7 @@ public class MaintenanceController {
             }
         }
         maintenance.setStatus(newStatus); // 设备状态设为维修中
+
         return  maintenanceMapper.updateMaintenanceStatus(maintenance.getMaintenanceId(), maintenance.getStatus());
     }
 }

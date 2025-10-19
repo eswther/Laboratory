@@ -40,12 +40,16 @@ public class EquipmentController {
     public int addEquipment(@RequestBody Map<String, String> equipInfo) {
         Equipment equipment = new Equipment();
         equipment.setLab(laboratoryMapper.selectLaboratoryById0(Integer.parseInt(equipInfo.get("labId"))));
+
         if (equipment.getLab() == null) {
             return 2; // 实验室不存在
         }
+
+        // 设置设备信息
         equipment.setEquipmentName(equipInfo.get("equipmentName"));
         equipment.setStatus(Boolean.parseBoolean(equipInfo.get("status")));
         equipment.setModel(equipInfo.get("model"));
+
         return equipmentMapper.insertEquipment(equipment);
     }
 
@@ -68,14 +72,20 @@ public class EquipmentController {
     @RequestMapping("/updateEquipment")
     public int updateEquipment(@RequestBody Map<String, String> equipInfo) {
         Equipment equipment = new Equipment();
+
+        // 得到设备基本信息
         equipment.setEquipmentId(Integer.parseInt(equipInfo.get("equipmentId")));
         equipment.setLab(laboratoryMapper.selectLaboratoryById0(Integer.parseInt(equipInfo.get("labId"))));
+
         if (equipment.getLab() == null) {
             return 2; // 实验室不存在
         }
+
+        // 设置设备修改信息
         equipment.setEquipmentName(equipInfo.get("equipmentName"));
         equipment.setStatus(Boolean.parseBoolean(equipInfo.get("status")));
         equipment.setModel(equipInfo.get("model"));
+
         return equipmentMapper.updateEquipment(equipment);
     }
 

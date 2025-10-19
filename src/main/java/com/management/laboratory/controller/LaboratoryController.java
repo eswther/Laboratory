@@ -25,6 +25,7 @@ public class LaboratoryController {
 
     DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     DateTimeFormatter localTimeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+
     /**
      * 获取所有实验室信息
      * @return 实验室列表
@@ -33,6 +34,7 @@ public class LaboratoryController {
     public List<Laboratory> getAllLaboratories() {
         return laboratoryMapper.selectAllLaboratories();
     }
+
     /**
      * 添加实验室
      * @param labInfo 实验室信息
@@ -42,6 +44,8 @@ public class LaboratoryController {
     public int addLab(@RequestBody Map<String, String> labInfo) {
 
         Laboratory laboratory = new Laboratory();
+
+        // 设置实验室信息
         laboratory.setLabName(labInfo.get("labName"));
         laboratory.setLocation(labInfo.get("location"));
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
@@ -64,6 +68,8 @@ public class LaboratoryController {
         int result1 = 0;
         result0 = equipmentMapper.deleteEquipmentByLabId(Integer.parseInt(labInfo.get("labId")));
         result1 = laboratoryMapper.deleteLaboratory(Integer.parseInt(labInfo.get("labId")));
+
+        // 返回删除结果
         if (result1 == 1){
             return 0;// 删除成功
         }else if(result0 == 0 && result1 == 0){
@@ -89,6 +95,7 @@ public class LaboratoryController {
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
         laboratory.setOpenTime(LocalTime.parse(labInfo.get("openTime"), localTimeFormat));
         laboratory.setCloseTime(LocalTime.parse(labInfo.get("closeTime"), localTimeFormat));
+
         return laboratoryMapper.updateLaboratory(laboratory);
     }
 

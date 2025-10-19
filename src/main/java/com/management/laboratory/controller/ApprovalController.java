@@ -56,17 +56,25 @@ public class ApprovalController {
     public int approvel(@RequestBody Map<String, String> approvalInfo) {
         Approval approval = new Approval();
         Reservation reservation = reservationMapper.selectReservationById(Integer.parseInt(approvalInfo.get("reservationId")));
+
+        // 预约不存在
         if (reservation == null){
-            return 2; // 预约不存在
+            return 2;
         }
+
         Teacher teacher = teacherMapper.selectTeacherById(Integer.parseInt(approvalInfo.get("teacherId")));
+
+        // 教师不存在
         if (teacher == null){
-            return 4; // 教师不存在
+            return 4;
         }
+
+        // 设置审批信息
         approval.setTeacher(teacher);
         approval.setReservation(reservation);
         approval.setNotes(approvalInfo.get("notes"));
         approval.setStatus(Integer.parseInt(approvalInfo.get("status")));
+
         if (approval.getStatus() == 1) {
             reservation.setStatus(1); // 审批通过，更新预约状态为已批准
             if (reservationMapper.updateReservationStatus(reservation.getReservationId(), reservation.getStatus()) != 1) {
@@ -78,7 +86,10 @@ public class ApprovalController {
                 return 3; // 预约状态更新失败
             }
         }
+
+        // 设置审批时间
         approval.setApprovalTime(LocalDateTime.parse(approvalInfo.get("approvalTime"), localDateTimeFormatter));
+
         return approvalMapper.insertApproval(approval);
     }
 
