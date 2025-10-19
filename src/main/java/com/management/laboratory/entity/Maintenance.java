@@ -23,6 +23,8 @@ public class Maintenance {
 
     private int status;
 
+    private User user;
+
     public Maintenance() {
     }
 

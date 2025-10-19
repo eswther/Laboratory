@@ -2,8 +2,10 @@ package com.management.laboratory.controller;
 
 import com.management.laboratory.entity.Equipment;
 import com.management.laboratory.entity.Maintenance;
+import com.management.laboratory.entity.User;
 import com.management.laboratory.mapper.EquipmentMapper;
 import com.management.laboratory.mapper.MaintenanceMapper;
+import com.management.laboratory.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,8 @@ public class MaintenanceController {
     @Autowired
     EquipmentMapper equipmentMapper;
     DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 获取所有维修信息
@@ -40,11 +44,19 @@ public class MaintenanceController {
     public int addMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = new Maintenance();
         Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
+        if (equipment == null){
+            return 3; // 设备不存在
+        }
         equipment.setStatus(false); // 设备状态设为维修中
         if(equipmentMapper.updateEquipment(equipment)!=1){;
             return 2; // 设备状态更新失败
         }
+        User user = userMapper.selectUserByUserId(Integer.parseInt(maintenanceInfo.get("userId")));
+        if (user == null){
+            return 4; // 用户不存在
+        }
         maintenance.setEquipment(equipment);
+        maintenance.setUser(user);
         maintenance.setReportTime(LocalDateTime.parse(maintenanceInfo.get("reportTime"), localDateTimeFormatter));
         maintenance.setNotes(maintenanceInfo.get("notes"));
         maintenance.setStatus(Integer.parseInt(maintenanceInfo.get("status")));

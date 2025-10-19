@@ -23,6 +23,8 @@ public class Approval {
 
     private LocalDateTime approvalTime;
 
+    private Teacher teacher;
+
     public Approval() {
     }
 

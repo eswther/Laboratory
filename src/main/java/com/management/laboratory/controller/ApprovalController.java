@@ -2,8 +2,10 @@ package com.management.laboratory.controller;
 
 import com.management.laboratory.entity.Approval;
 import com.management.laboratory.entity.Reservation;
+import com.management.laboratory.entity.Teacher;
 import com.management.laboratory.mapper.ApprovalMapper;
 import com.management.laboratory.mapper.ReservationMapper;
+import com.management.laboratory.mapper.TeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,8 @@ public class ApprovalController {
     @Autowired
     ReservationMapper reservationMapper;
     DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    @Autowired
+    private TeacherMapper teacherMapper;
 
     /**
      * 获取所有审批信息
@@ -55,6 +59,11 @@ public class ApprovalController {
         if (reservation == null){
             return 2; // 预约不存在
         }
+        Teacher teacher = teacherMapper.selectTeacherById(Integer.parseInt(approvalInfo.get("teacherId")));
+        if (teacher == null){
+            return 4; // 教师不存在
+        }
+        approval.setTeacher(teacher);
         approval.setReservation(reservation);
         approval.setNotes(approvalInfo.get("notes"));
         approval.setStatus(Integer.parseInt(approvalInfo.get("status")));
