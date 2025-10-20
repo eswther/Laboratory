@@ -104,7 +104,7 @@ public interface EquipmentMapper {
      * @return 设备信息列表
      */
     @Select("SELECT e.equipment_id, e.equipment_name, e.model, e.status, " +
-            "       l.lab_id, l.lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "       l.lab_id, l.lab_name, l.location, l.capacity, l.open_Time, l.close_Time " +
             "FROM equipment e " +
             "JOIN laboratory l ON e.lab_id = l.lab_id " +
             "WHERE e.lab_id = #{labId}")
@@ -137,7 +137,7 @@ public interface EquipmentMapper {
      * @return 设备信息列表
      */
     @Select("SELECT e.equipment_id, e.equipment_name, e.model, e.status, " +
-            "       l.lab_id, l.lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "       l.lab_id, l.lab_name, l.location, l.capacity, l.open_Time, l.close_Time " +
             "FROM equipment e " +
             "JOIN laboratory l ON e.lab_id = l.lab_id ")
     @ResultMap("equipmentWithLabMap")
