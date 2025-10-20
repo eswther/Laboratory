@@ -7,6 +7,7 @@ public enum ResponseCode {
 
     // 成功
     SUCCESS(200, "操作成功"),
+    // 失败
     FAILED(500, "操作失败"),
     // 客户端错误
     BAD_REQUEST(400, "请求参数错误"),

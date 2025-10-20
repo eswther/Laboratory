@@ -6,7 +6,7 @@ package com.management.laboratory;
 public class ResponseUtils {
 
     private ResponseUtils() {
-        // 工具类，防止实例化
+        // 工具类，私有构造函数，防止实例化
     }
 
     public static <T> ApiResponse<T> ok() {
