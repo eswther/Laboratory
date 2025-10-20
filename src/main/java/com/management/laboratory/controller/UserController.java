@@ -6,6 +6,7 @@ import com.management.laboratory.mapper.StudentMapper;
 import com.management.laboratory.mapper.TeacherMapper;
 import com.management.laboratory.mapper.UserMapper;
 import com.management.laboratory.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +40,7 @@ public class UserController {
      * @return 1: 注册成功 2: 账号已存在 0: 注册失败
      */
     @PostMapping("/register")
-    public int register(@RequestBody Map<String, String> userInfo) {
+    public int register(HttpSession session, @RequestBody Map<String, String> userInfo) {
         // 创建一个用户对象
         User newUser = new User(userInfo.get("account"), userInfo.get("password"), Integer.parseInt(userInfo.get("permission")));
 
@@ -50,6 +51,10 @@ public class UserController {
         if(userMapper.selectUserByAccount(newUser.getAccount()) != null) {
             result = 2; // 将返回值设置为2，表示账号已存在
         }else {
+            // 将用户信息存入Session
+            session.setAttribute("registerUser", newUser);
+            // 设置Session过期时间（例如10分钟）
+            session.setMaxInactiveInterval(10 * 60);
             userService.setShareUser(newUser);
             user = newUser;
             result = 1; // 将返回值设置为1，表示注册成功
@@ -75,12 +80,12 @@ public class UserController {
             map.put("result", 1);
             map.put("userId", null);
             map.put("Id", null);
-            return map; // 如果查询结果为空，则返回false，表示用户不存在。
+            return map; //
         }else if (!loginUser.getPassword().equals(userInfo.get("password"))){
             map.put("result", 2);
             map.put("userId", null);
             map.put("Id", null);
-            return map; // 如果密码不匹配，则返回false，表示登录失败。
+            return map; //
         }else { // 如果用户名和密码都匹配，则继续进行登录操作。
             userService.setShareUser(loginUser);
 

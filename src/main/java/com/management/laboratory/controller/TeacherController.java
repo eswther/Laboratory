@@ -6,6 +6,7 @@ import com.management.laboratory.mapper.StudentMapper;
 import com.management.laboratory.mapper.TeacherMapper;
 import com.management.laboratory.mapper.UserMapper;
 import com.management.laboratory.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +38,7 @@ public class TeacherController {
      * @return 1: 注册成功 2: 账号已存在 0: 注册失败
      */
     @RequestMapping("/register/teacher")
-    public Map<String , String> register(@RequestBody Map<String, String> teacherInfo){
+    public Map<String , String> register(HttpSession session, @RequestBody Map<String, String> teacherInfo){
         // 从userService中获取用户信息
         User shareUser = userService.getShareUser();
         Map<String , String> resultMap = new HashMap<>();
@@ -58,15 +59,16 @@ public class TeacherController {
         }else { // 教师 number 不存在， 添加教师信息
             teacher = newTeacher;
             userService.setShareTeacher(newTeacher);
-
-            result0 = userMapper.insertUser(userService.getShareUser()); // 添加用户信息,得到返回结果
-            result1 = teacherMapper.insertTeacher(teacher); // 添加教师信息,得到返回结果
+            session.setAttribute("registerTeacher", newTeacher);
+            session.setMaxInactiveInterval(10 * 60); // 设置Session过期时间
+            result0 = userMapper.insertUser((User) session.getAttribute("registerUser")); // 添加用户信息,得到返回结果
+            result1 = teacherMapper.insertTeacher(newTeacher); // 添加教师信息,得到返回结果
         }
         if (result0 == 1 && result1 == 1) {
             // 当两个结果都为1时，表示注册成功
             resultMap.put("result", "0");
-            resultMap.put("userId", String.valueOf(userService.getShareUser().getUserId()));
-            resultMap.put("Id", String.valueOf(userService.getShareTeacher().getTeacherId()));
+            resultMap.put("userId", String.valueOf(((User) session.getAttribute("registerUser")).getUserId()));
+            resultMap.put("Id", String.valueOf(((Teacher) session.getAttribute("registerTeacher")).getTeacherId()));
             return resultMap;
         } else if (result1 == 2) {
             resultMap.put("result", "2");
