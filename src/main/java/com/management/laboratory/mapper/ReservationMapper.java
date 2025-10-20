@@ -16,7 +16,7 @@ public interface ReservationMapper {
      * @return 预约信息列表
      */
     @Select("SELECT r.reservation_id, r.student_id, r.project_name, r.start_time, r.end_time, r.status, " +
-            "       l.lab_id, l.name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
             "FROM reservation r " +
             "LEFT JOIN laboratory l ON r.lab_id = l.lab_id " +
             "LEFT JOIN student s ON r.student_id = s.student_id " +
@@ -44,7 +44,7 @@ public interface ReservationMapper {
      * @return 预约信息列表
      */
     @Select("SELECT r.reservation_id, r.student_id, r.project_name, r.start_time, r.end_time, r.status, " +
-            "       l.lab_id, l.name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
             "FROM reservation r " +
             "LEFT JOIN laboratory l ON r.lab_id = l.lab_id " +
             "LEFT JOIN student s ON r.student_id = s.student_id " +
@@ -68,7 +68,7 @@ public interface ReservationMapper {
      * @return 预约信息列表
      */
     @Select("SELECT r.reservation_id, r.student_id, r.project_name, r.start_time, r.end_time, r.status, " +
-            "       l.lab_id, l.name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
             "FROM reservation r " +
             "LEFT JOIN laboratory l ON r.lab_id = l.lab_id " +
             "ORDER BY r.start_time DESC")
@@ -81,7 +81,7 @@ public interface ReservationMapper {
      * @return 该学生的预约信息列表
      */
     @Select("SELECT r.reservation_id, r.student_id, r.project_name, r.start_time, r.end_time, r.status, " +
-            "       l.lab_id, l.name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
             "FROM reservation r " +
             "LEFT JOIN laboratory l ON r.lab_id = l.lab_id " +
             "WHERE r.student_id = #{studentId} " +
@@ -96,7 +96,7 @@ public interface ReservationMapper {
      * @return 该学生的预约信息列表
      */
     @Select("SELECT r.reservation_id, r.student_id, r.project_name, r.start_time, r.end_time, r.status, " +
-            "       l.lab_id, l.name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
             "FROM reservation r " +
             "LEFT JOIN laboratory l ON r.lab_id = l.lab_id " +
             "WHERE r.student_id = #{studentId} AND r.status = #{status} " +

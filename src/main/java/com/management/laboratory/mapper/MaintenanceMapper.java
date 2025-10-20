@@ -12,8 +12,8 @@ public interface MaintenanceMapper {
      * @return 维修信息列表
      */
     @Select("SELECT m.maintenance_id, m.equipment_id, m.report_time, m.notes, m.status, m.user_id, " +
-            "       e.equipment_id, e.name AS equipment_name, e.model, e.status AS equipment_status, " +
-            "       l.lab_id, l.name AS lab_name, l.location, l.capacity, " +
+            "       e.equipment_id, e.equipment_name AS equipment_name, e.model, e.status AS equipment_status, " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, " +
             "       u.user_id, u.account, u.permission " +
             "FROM maintenance m " +
             "LEFT JOIN equipment e ON m.equipment_id = e.equipment_id " +
@@ -50,8 +50,8 @@ public interface MaintenanceMapper {
      * @return 维修信息
      */
     @Select("SELECT m.maintenance_id, m.equipment_id, m.report_time, m.notes, m.status, m.user_id, " +
-            "       e.equipment_id, e.name AS equipment_name, e.model, e.status AS equipment_status, " +
-            "       l.lab_id, l.name AS lab_name, l.location, l.capacity, " +
+            "       e.equipment_id, e.equipment_name AS equipment_name, e.model, e.status AS equipment_status, " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, " +
             "       u.user_id, u.account, u.permission " +
             "FROM maintenance m " +
             "LEFT JOIN equipment e ON m.equipment_id = e.equipment_id " +

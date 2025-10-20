@@ -48,7 +48,7 @@ public interface LaboratoryMapper {
      * @param laboratory 实验室信息
      * @return 增加结果
      */
-    @Insert("INSERT INTO laboratory (lab_name, location, capacity, openTime, closeTime) " +
+    @Insert("INSERT INTO laboratory (lab_name, location, capacity, open_Time, close_Time) " +
             " VALUES (#{labName}, #{location}, #{capacity}, #{openTime}, #{closeTime})")
     @Options(useGeneratedKeys = true, keyProperty = "laboratoryId", keyColumn = "laboratory_id")
     int insertLaboratory(Laboratory laboratory);
