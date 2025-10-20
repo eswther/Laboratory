@@ -1,4 +1,7 @@
 package com.management.laboratory.controller;
+import com.management.laboratory.ApiResponse;
+import com.management.laboratory.ResponseCode;
+import com.management.laboratory.ResponseUtils;
 import com.management.laboratory.entity.Student;
 import com.management.laboratory.entity.Teacher;
 import com.management.laboratory.entity.User;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 @RestController
 @RequestMapping
@@ -38,9 +42,9 @@ public class StudentController {
      * @return 1: 注册成功 2: 账号已存在 0: 注册失败
      */
     @RequestMapping("/register/student")
-    public Map<String , String> register(HttpSession session, @RequestBody Map<String, String> studentInfo){
+    public ApiResponse<Map<String , String>> register(HttpSession session, @RequestBody Map<String, String> studentInfo){
         // 从userService中获取用户信息
-        User shareUser = userService.getShareUser();
+        User shareUser = (User) session.getAttribute("registerUser");
         Map<String , String> resultMap = new HashMap<>();
         // 创建学生对象
         Student newStudent = new Student(shareUser.getAccount(), shareUser.getPassword(),
@@ -60,7 +64,7 @@ public class StudentController {
 
             if (teacher == null) {
                 resultMap.put("result", "3");
-                return resultMap;
+                return ResponseUtils.fail(ResponseCode.TEACHER_NOT_EXIST);
             } // 当教师不存在时，返回3
 
             // 设置学生的指导教师
@@ -80,15 +84,15 @@ public class StudentController {
             resultMap.put("result", "0");
             resultMap.put("userId", String.valueOf(((User) session.getAttribute("registerUser")).getUserId()));
             resultMap.put("Id", String.valueOf(((Student) session.getAttribute("registerStudent")).getStudentId()));
-            return resultMap;
+            return ResponseUtils.ok("注册成功", resultMap);
         } else if (result1 == 2) {
             resultMap.put("result", "2");
             // 当result1为2时，表示number已存在
-            return resultMap;
+            return ResponseUtils.fail(ResponseCode.STUDENT_EXIST);
         } else {
             resultMap.put("result", "1");
             // 当两个结果都不为1时，表示注册失败
-            return resultMap;
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
         }
     }
 
@@ -98,19 +102,24 @@ public class StudentController {
      * @return 学生信息
      */
     @RequestMapping("/studentInfo")
-    public Student getStudentInfo(@RequestBody Map<String, String> studentInfo) {
+    public ApiResponse<Student> getStudentInfo(@RequestBody Map<String, String> studentInfo) {
         // 获取学生信息
         Student student = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
 
         User user = userMapper.selectUserByUserId(Integer.parseInt(studentInfo.get("userId")));
-
+        if (user == null){
+            return ResponseUtils.fail(ResponseCode.USER_NOT_EXIST); //
+        }
+        if (student == null){
+            return ResponseUtils.fail(ResponseCode.STUDENT_NOT_EXIST); //
+        }
         // 设置用户信息
         student.setUserId(user.getUserId());
         student.setPassword(user.getPassword());
         student.setAccount(user.getAccount());
         student.setPermission(user.getPermission());
 
-        return student; // 返回学生信息
+        return ResponseUtils.ok("获取成功",student); // 返回学生信息
     }
 
     /**
@@ -119,11 +128,11 @@ public class StudentController {
      * @return 更新结果
      */
     @PostMapping("/updateStudentInfo")
-    public int updateStudentInfo(@RequestBody Map<String, String> studentInfo) {
+    public ApiResponse<Void> updateStudentInfo(@RequestBody Map<String, String> studentInfo) {
         // 获取学生信息
         Student existingStudent = studentMapper.selectStudentByUserId(Integer.parseInt(studentInfo.get("userId")));
         if (existingStudent == null) {
-            return 0; // 学生不存在，返回false
+            return ResponseUtils.fail(ResponseCode.STUDENT_NOT_EXIST); // 学生不存在，返回false
         }
 
         // 更新学生信息
@@ -131,13 +140,16 @@ public class StudentController {
         existingStudent.setDepartment(studentInfo.get("department"));
         existingStudent.setMajor(studentInfo.get("major"));
         existingStudent.setNumber(studentInfo.get("number"));
-
+        if(studentMapper.selectStudentByNumber(existingStudent.getNumber()) != null){
+            return ResponseUtils.fail(ResponseCode.STUDENT_EXIST); // 学生 number 已存在，返回false
+        }
         // 这里假设有一个方法可以更新学生信息到数据库中
         int updateResult = studentMapper.updateStudent(existingStudent);
-        return updateResult; // 返回更新是否成功
+        if (updateResult == 1) {
+            return ResponseUtils.ok("学生信息更新成功"); // 返回更新结果
+        } else {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
-
-
-
 
 }
