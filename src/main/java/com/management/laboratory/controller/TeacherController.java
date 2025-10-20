@@ -151,8 +151,8 @@ public class TeacherController {
      * 分页获取所有教师信息
      * @return 教师信息列表
      */
-    @RequestMapping("/getTeachers")
-    public ApiResponse<List<Teacher>> getAllTeachers(@RequestParam(defaultValue = "1") Integer page,
+    @RequestMapping("/getTeachersByPage")
+    public ApiResponse<List<Teacher>> getTeachersByPage(@RequestParam(defaultValue = "1") Integer page,
                                                      @RequestParam(defaultValue = "10") Integer size) {
         try {
             // 参数校验

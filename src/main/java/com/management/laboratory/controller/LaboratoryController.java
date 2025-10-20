@@ -1,5 +1,7 @@
 package com.management.laboratory.controller;
 
+import com.management.laboratory.ApiResponse;
+import com.management.laboratory.ResponseUtils;
 import com.management.laboratory.entity.Laboratory;
 import com.management.laboratory.mapper.EquipmentMapper;
 import com.management.laboratory.mapper.LaboratoryMapper;
@@ -30,9 +32,14 @@ public class LaboratoryController {
      * @return 实验室列表
      */
     @RequestMapping("/getAllLaboratories")
-    public List<Laboratory> getAllLaboratories() {
-        return laboratoryMapper.selectAllLaboratories();
+    public ApiResponse<List<Laboratory>> getAllLaboratories() {
+        return ResponseUtils.ok("获取所有实验室数据", laboratoryMapper.selectAllLaboratories());
     }
+
+
+
+
+
     /**
      * 添加实验室
      * @param labInfo 实验室信息
