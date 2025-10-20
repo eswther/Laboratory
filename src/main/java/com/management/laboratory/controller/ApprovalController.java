@@ -53,7 +53,7 @@ public class ApprovalController {
      * @return 添加结果
      */
     @RequestMapping("/approvel")
-    public int approvel(@RequestBody Map<String, String> approvalInfo) {
+    public int approval(@RequestBody Map<String, String> approvalInfo) {
         Approval approval = new Approval();
         Reservation reservation = reservationMapper.selectReservationById(Integer.parseInt(approvalInfo.get("reservationId")));
 

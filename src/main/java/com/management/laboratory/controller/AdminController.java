@@ -24,5 +24,4 @@ public class AdminController {
     DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     DateTimeFormatter localTimeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-
 }
