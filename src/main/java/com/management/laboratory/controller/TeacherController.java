@@ -61,7 +61,8 @@ public class TeacherController {
             userService.setShareTeacher(newTeacher);
             session.setAttribute("registerTeacher", newTeacher);
             session.setMaxInactiveInterval(10 * 60); // 设置Session过期时间
-            result0 = userMapper.insertUser((User) session.getAttribute("registerUser")); // 添加用户信息,得到返回结果
+            result0 = userMapper.insertUser(shareUser); // 添加用户信息,得到返回结果
+            newTeacher.setUserId(shareUser.getUserId());
             result1 = teacherMapper.insertTeacher(newTeacher); // 添加教师信息,得到返回结果
         }
         if (result0 == 1 && result1 == 1) {
@@ -144,7 +145,12 @@ public class TeacherController {
      */
     @RequestMapping("/getAllTeachers")
     public ApiResponse<List<Teacher>> getAllTeachers() {
-        return ResponseUtils.ok(teacherMapper.selectAllTeachers());
+        try{
+            List<Teacher> teachers = teacherMapper.selectAllTeachers();
+            return ResponseUtils.ok("获取教师列表", teachers);
+        }catch (Exception e){
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**

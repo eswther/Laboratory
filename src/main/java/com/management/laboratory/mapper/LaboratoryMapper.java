@@ -43,6 +43,7 @@ public interface LaboratoryMapper {
     Laboratory selectLaboratoryByName0(String  name);
 
 
+
     /**
      * 增加实验室
      * @param laboratory 实验室信息
@@ -105,6 +106,23 @@ public interface LaboratoryMapper {
     @Select("SELECT * FROM laboratory")
     @ResultMap("laboratoryWithEquipmentsMap")
     List<Laboratory> selectAllLaboratories();
+
+    /**
+     * 分页获取实验室信息
+     * @param offset 偏移量
+     * @param size 获取数量
+     * @return 实验室信息列表
+     */
+    @Select("SELECT * FROM laboratory LIMIT #{offset}, #{size}")
+    @ResultMap("laboratoryWithEquipmentsMap")
+    List<Laboratory> selectLaboratoriesByPage(@Param("offset") int offset,
+                                              @Param("size") int size);
+
+    /**
+     * 统计实验室数量
+     */
+    @Select("SELECT COUNT(*) FROM laboratory")
+    int countLaboratory();
 
     /**
      * 获取实验室容量

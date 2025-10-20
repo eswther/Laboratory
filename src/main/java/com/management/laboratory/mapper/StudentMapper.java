@@ -104,8 +104,8 @@ public interface StudentMapper {
      * @param student 学生信息
      * @return 插入成功返回1
      */
-    @Insert("INSERT INTO student (department, name, number, major, teacher_id) " +
-            "VALUES (#{department}, #{name}, #{number}, #{major}, #{teacher.getId()})")
+    @Insert("INSERT INTO student (department, name, number, major, teacher_id, user_id) " +
+            "VALUES (#{department}, #{name}, #{number}, #{major}, #{teacher.getId()}, #{userId})")
     @Options(useGeneratedKeys = true, keyProperty = "studentId", keyColumn = "student_id")
     public int insertStudent(Student student);
 

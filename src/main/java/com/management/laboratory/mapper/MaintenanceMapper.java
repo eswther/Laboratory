@@ -42,7 +42,30 @@ public interface MaintenanceMapper {
     })
     List<Maintenance> selectAllMaintenances();
 
+    /**
+     * 分页获取维修信息
+     * @param offset 偏移量
+     * @param size 数量
+     * @return 维修信息列表
+     */
+    @Select("SELECT m.maintenance_id, m.equipment_id, m.report_time, m.notes, m.status, m.user_id, " +
+            "       e.equipment_id, e.equipment_name AS equipment_name, e.model, e.status AS equipment_status, " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, " +
+            "       u.user_id, u.account, u.permission " +
+            "FROM maintenance m " +
+            "LEFT JOIN equipment e ON m.equipment_id = e.equipment_id " +
+            "LEFT JOIN laboratory l ON e.lab_id = l.lab_id " +
+            "LEFT JOIN user u ON m.user_id = u.user_id " +
+            "ORDER BY m.report_time DESC"+
+            " LIMIT #{size} OFFSET #{offset}")
+    @ResultMap("maintenanceMap")
+    List<Maintenance> selectMaintenancesByPage( @Param("offset") int offset, @Param("size") int size);
 
+    /**
+     * 统计维保数量
+     */
+    @Select("SELECT COUNT(*) FROM maintenance")
+    int countMaintenance();
 
     /**
      * 根据维保id获取维修信息

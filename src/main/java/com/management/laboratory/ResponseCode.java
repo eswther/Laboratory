@@ -34,13 +34,20 @@ public enum ResponseCode {
 
     // 实验室业务错误
     LAB_NOT_EXIST(2001, "实验室不存在"),
-    LAB_UNAVAILABLE(2002, "实验室不可用"),
+    LAB_UNAVAILABLE(2002, "实验室不可用，容量不足"),
     EQUIPMENT_NOT_EXIST(2003, "设备不存在"),
     EQUIPMENT_UNAVAILABLE(2004, "设备不可用"),
-    RESERVATION_CONFLICT(2005, "预约时间冲突"),
+    RESERVATION_CONFLICT(2005, "不在预约时间内"),
     RESERVATION_NOT_EXIST(2006, "预约不存在"),
     MAINTENANCE_NOT_EXIST(2007, "维修记录不存在"),
-    APPROVAL_NOT_EXIST(2008, "审批记录不存在");
+    APPROVAL_NOT_EXIST(2008, "审批记录不存在"),
+    LABORATORY_DELETE_FAILURE(2009, "删除实验室失败"),
+    EQUIPMENT_DELETE_FAILURE(2010, "删除设备失败"),
+    EQUIPMENT_UPDATE_FAILURE(2011, "设备状态更新失败"),
+    LAB_OUT_TIME(2012, "实验室不可用,在开放时间外"),
+    RESERVATION_UPDATE_FAILURE(2013, "预约状态更新失败"),
+    USER_RECORD_NOT_EXIST(2014, "使用记录不存在"),
+    ;
 
     private final Integer code;
     private final String message;

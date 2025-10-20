@@ -144,6 +144,27 @@ public interface EquipmentMapper {
     List<Equipment> selectAllEquipments();
 
     /**
+     * 分页查询所有设备信息
+     * @param offset 偏移量
+     * @param size   每页数量
+     * @return 设备信息列表
+     */
+    @Select("SELECT e.equipment_id, e.equipment_name, e.model, e.status, " +
+            "       l.lab_id, l.lab_name, l.location, l.capacity, l.open_Time, l.close_Time " +
+            "FROM equipment e " +
+            "JOIN laboratory l ON e.lab_id = l.lab_id "+
+            "LIMIT #{size} OFFSET #{offset}")
+    @ResultMap("equipmentWithLabMap")
+    List<Equipment> selectEquipmentsByPage(@Param("offset") int offset, @Param("size") int size);
+
+    /**
+     * 统计设备数量
+     * @return 设备数量
+     */
+    @Select("SELECT COUNT(*) FROM equipment")
+    int countEquipments();
+
+    /**
      * 更新设备状态
      * @param equipment 设备信息（包含设备 id 和新状态）
      * @return 更新结果

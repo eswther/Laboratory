@@ -1,14 +1,17 @@
 package com.management.laboratory.controller;
 
 import com.management.laboratory.ApiResponse;
+import com.management.laboratory.ResponseCode;
 import com.management.laboratory.ResponseUtils;
 import com.management.laboratory.entity.Laboratory;
+import com.management.laboratory.entity.Teacher;
 import com.management.laboratory.mapper.EquipmentMapper;
 import com.management.laboratory.mapper.LaboratoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -33,10 +36,38 @@ public class LaboratoryController {
      */
     @RequestMapping("/getAllLaboratories")
     public ApiResponse<List<Laboratory>> getAllLaboratories() {
-        return ResponseUtils.ok("获取所有实验室数据", laboratoryMapper.selectAllLaboratories());
+        try {
+            List<Laboratory> laboratories = laboratoryMapper.selectAllLaboratories();
+            return ResponseUtils.ok("获取所有实验室数据", laboratories);
+        } catch (Exception e) {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
+    public ApiResponse<List<Laboratory>> getLaboratoriesByPage(@RequestParam(defaultValue = "1") Integer page,
+                                                               @RequestParam(defaultValue = "10") Integer size){
+        try {
+            // 参数校验
+            if (page == null || page < 1) {
+                page = 1;
+            }
+            if (size == null || size < 1) {
+                size = 10;
+            }
+            if (size > 100) {
+                size = 100; // 限制每页最大数量
+            }
+            // 计算偏移量
+            int offset = (page - 1) * size;
+            // 查询数据
+            List<Laboratory> laboratories = laboratoryMapper.selectLaboratoriesByPage(offset, size);
+            int total = laboratoryMapper.countLaboratory();
+            return ResponseUtils.ok("获取实验室列表成功", laboratories);
 
+        } catch (Exception e) {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
+    }
 
 
 
@@ -46,7 +77,7 @@ public class LaboratoryController {
      * @return 添加结果
      */
     @RequestMapping("/addLab")
-    public int addLab(@RequestBody Map<String, String> labInfo) {
+    public ApiResponse<Void> addLab(@RequestBody Map<String, String> labInfo) {
 
         Laboratory laboratory = new Laboratory();
         laboratory.setLabName(labInfo.get("labName"));
@@ -57,7 +88,11 @@ public class LaboratoryController {
         // 设备信息暂时为空
         laboratory.setEquipments(null);
         int result = laboratoryMapper.insertLaboratory(laboratory);
-        return result;
+        if (result == 1){
+            return ResponseUtils.ok("实验室添加成功", null);
+        }else {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -66,19 +101,19 @@ public class LaboratoryController {
      * @return 删除结果
      */
     @RequestMapping("/deleteLab")
-    public int deleteLab(@RequestBody Map<String, String> labInfo) {
+    public ApiResponse<Void> deleteLab(@RequestBody Map<String, String> labInfo) {
         int result0 = 0;
         int result1 = 0;
         result0 = equipmentMapper.deleteEquipmentByLabId(Integer.parseInt(labInfo.get("labId")));
         result1 = laboratoryMapper.deleteLaboratory(Integer.parseInt(labInfo.get("labId")));
         if (result1 == 1){
-            return 0;// 删除成功
+            return ResponseUtils.ok("删除成功", null);// 删除成功
         }else if(result0 == 0 && result1 == 0){
-            return 1;// 删除设备失败
+            return ResponseUtils.fail(ResponseCode.EQUIPMENT_DELETE_FAILURE);// 删除设备失败
         }else if(result1 == 0){
-            return 2;// 删除实验室失败
+            return ResponseUtils.fail(ResponseCode.LABORATORY_DELETE_FAILURE);// 删除实验室失败
         }else {
-            return 3;// 删除设备和实验室都失败
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);// 删除设备和实验室都失败
         }
     }
 
@@ -88,7 +123,7 @@ public class LaboratoryController {
      * @return 修改结果
      */
     @RequestMapping("/updateLab")
-    public int updateLab(@RequestBody Map<String, String> labInfo) {
+    public ApiResponse<Void> updateLab(@RequestBody Map<String, String> labInfo) {
         Laboratory laboratory = new Laboratory();
         laboratory.setLabId(Integer.parseInt(labInfo.get("labId")));
         laboratory.setLabName(labInfo.get("labName"));
@@ -96,7 +131,11 @@ public class LaboratoryController {
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
         laboratory.setOpenTime(LocalTime.parse(labInfo.get("openTime"), localTimeFormat));
         laboratory.setCloseTime(LocalTime.parse(labInfo.get("closeTime"), localTimeFormat));
-        return laboratoryMapper.updateLaboratory(laboratory);
+        if (laboratoryMapper.updateLaboratory(laboratory)==1){
+            return ResponseUtils.ok("实验室信息修改成功", null);
+        }else {
+            return  ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -105,8 +144,12 @@ public class LaboratoryController {
      * @return 查询结果
      */
     @RequestMapping("/selectLab")
-    public Laboratory selectLab(@RequestBody Map<String, String> labInfo) {
+    public ApiResponse<Laboratory> selectLab(@RequestBody Map<String, String> labInfo) {
         Laboratory laboratory = laboratoryMapper.selectLaboratoryById(Integer.parseInt(labInfo.get("labId")));
-        return laboratory;
+        if (laboratory == null){
+            return  ResponseUtils.fail(ResponseCode.LAB_NOT_EXIST);
+        }else {
+            return ResponseUtils.ok("实验室信息查询成功", laboratory);
+        }
     }
 }

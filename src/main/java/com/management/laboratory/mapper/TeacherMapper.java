@@ -30,7 +30,7 @@ public interface TeacherMapper {
             @Result(property = "name", column = "name"),
             @Result(property = "department", column = "department"),
             @Result(property = "number", column = "number"),
-            @Result(property = "student", column = "teacher_id",javaType = java.util.List.class,
+            @Result(property = "students", column = "teacher_id",javaType = java.util.List.class,
                     many = @Many(select = "com.management.laboratory.mapper.StudentMapper.selectStudentsByTeacherId"))
     })
     public Teacher selectTeacherById(int id);
@@ -121,8 +121,8 @@ public interface TeacherMapper {
      * @param teacher 教师信息
      * @return 插入结果
      */
-    @Insert("INSERT INTO teacher (department, name, number) " +
-            "VALUES (#{department}, #{name}, #{number})")
+    @Insert("INSERT INTO teacher (department, name, number, user_id) " +
+            "VALUES (#{department}, #{name}, #{number}, #{userId})")
     @Options(useGeneratedKeys = true, keyProperty = "teacherId", keyColumn = "teacher_id")
     public int insertTeacher(Teacher teacher);
 

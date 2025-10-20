@@ -37,6 +37,24 @@ public interface ReservationMapper {
     })
     List<Reservation> selectAllReservationsByTeacher(int teacherId);
 
+
+    /**
+     * 根据教师 id 分页获取预约信息
+     * @param teacherId 教师 id
+     * @param offset 偏移量
+     * @param size 数量
+     * @return 预约信息列表
+     */
+    @Select("SELECT r.reservation_id, r.student_id, r.project_name, r.start_time, r.end_time, r.status, " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, l.open_time, l.close_time " +
+            "FROM reservation r " +
+            "LEFT JOIN laboratory l ON r.lab_id = l.lab_id " +
+            "LEFT JOIN student s ON r.student_id = s.student_id " +
+            "WHERE s.teacher_id = #{teacherId}"+
+            " LIMIT #{size} OFFSET #{offset}")
+    @ResultMap("reservationMap")
+    List<Reservation> selectReservationsByTeacherByPage(int teacherId, int offset, int size);
+
     /**
      * 根据学生 id 和状态获取预约信息
      * @param teacherId 学生 id

@@ -1,5 +1,8 @@
 package com.management.laboratory.controller;
 
+import com.management.laboratory.ApiResponse;
+import com.management.laboratory.ResponseCode;
+import com.management.laboratory.ResponseUtils;
 import com.management.laboratory.entity.Laboratory;
 import com.management.laboratory.entity.Reservation;
 import com.management.laboratory.mapper.LaboratoryMapper;
@@ -29,8 +32,33 @@ public class ReservationController {
      * @return 预约信息列表
      */
     @RequestMapping("/getAllReservationsOfTeacher")
-    public List<Reservation> getAllReservationsOfTeacher(@RequestBody Map<String, String> teacherInfo) {
-        return reservationMapper.selectAllReservationsByTeacher(Integer.parseInt(teacherInfo.get("teacherId")));
+    public ApiResponse<List<Reservation>> getAllReservationsOfTeacher(@RequestBody Map<String, String> teacherInfo) {
+        return ResponseUtils.ok("获取预约列表",reservationMapper.selectAllReservationsByTeacher(Integer.parseInt(teacherInfo.get("teacherId"))));
+    }
+
+    public ApiResponse<List<Reservation>> getAllReservationsOfTeacherByPage(@RequestBody Map<String, String> teacherInfo,
+                                                                     Integer page, Integer size) {
+        try {
+            // 参数校验
+            if (page == null || page < 1) {
+                page = 1;
+            }
+            if (size == null || size < 1) {
+                size = 10;
+            }
+            if (size > 100) {
+                size = 100; // 限制每页最大数量
+            }
+            // 计算偏移量
+            int offset = (page - 1) * size;
+            // 查询数据
+            List<Reservation> reservations = reservationMapper.selectReservationsByTeacherByPage(
+                    Integer.parseInt(teacherInfo.get("teacherId")), offset, size);
+            return ResponseUtils.ok("获取预约列表成功", reservations);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -38,9 +66,15 @@ public class ReservationController {
      * @return 预约信息列表
      */
     @RequestMapping("/getAllReservationsOfTeacherByStatus")
-    public List<Reservation> getAllReservationsOfTeacherByStatus(@RequestBody Map<String, String> teacherInfo) {
-        return reservationMapper.selectAllReservationsByTeacherByStatus(Integer.parseInt(teacherInfo.get("teacherId")),
-                Integer.parseInt(teacherInfo.get("status")));
+    public ApiResponse<List<Reservation>> getAllReservationsOfTeacherByStatus(@RequestBody Map<String, String> teacherInfo) {
+        try {
+            List<Reservation> reservations = reservationMapper.selectAllReservationsByTeacherByStatus(Integer.parseInt(teacherInfo.get("teacherId")),
+                    Integer.parseInt(teacherInfo.get("status")));
+            return ResponseUtils.ok("获取预约列表成功", reservations);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -48,8 +82,14 @@ public class ReservationController {
      * @return 预约信息列表
      */
     @RequestMapping("/getAllReservations")
-    public List<Reservation> getAllReservations() {
-        return reservationMapper.selectAllReservations();
+    public ApiResponse<List<Reservation>> getAllReservations() {
+        try {
+            List<Reservation> reservations = reservationMapper.selectAllReservations();
+            return ResponseUtils.ok("获取预约列表成功", reservations);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
 
@@ -59,8 +99,14 @@ public class ReservationController {
      * @return 该学生的预约信息列表
      */
     @RequestMapping("/getReservationsByStudentId")
-    public List<Reservation> getReservationsByStudentId(@RequestBody Map<String, String> studentInfo) {
-        return reservationMapper.selectReservationsByStudentId(Integer.parseInt(studentInfo.get("studentId")));
+    public ApiResponse<List<Reservation>> getReservationsByStudentId(@RequestBody Map<String, String> studentInfo) {
+        try {
+            List<Reservation> reservations = reservationMapper.selectReservationsByStudentId(Integer.parseInt(studentInfo.get("studentId")));
+            return ResponseUtils.ok("获取预约列表成功", reservations);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -69,9 +115,15 @@ public class ReservationController {
      * @return 该学生的预约信息列表
      */
     @RequestMapping("/getReservationsByStudentIdByStatus")
-    public List<Reservation> getReservationsByStudentIdByStatus(@RequestBody Map<String, String> studentInfo) {
-        return reservationMapper.selectReservationsByStudentIdByStatus(Integer.parseInt(studentInfo.get("studentId"))
-                ,Integer.parseInt(studentInfo.get("status")));
+    public ApiResponse<List<Reservation>> getReservationsByStudentIdByStatus(@RequestBody Map<String, String> studentInfo) {
+        try {
+            List<Reservation> reservations = reservationMapper.selectReservationsByStudentIdByStatus(Integer.parseInt(studentInfo.get("studentId"))
+                    ,Integer.parseInt(studentInfo.get("status")));
+            return ResponseUtils.ok("获取预约列表成功", reservations);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -80,7 +132,7 @@ public class ReservationController {
      * @return 添加结果
      */
     @RequestMapping("/reserve")
-    public int reserve(@RequestBody Map<String, String> reservationInfo) {
+    public ApiResponse<Void> reserve(@RequestBody Map<String, String> reservationInfo) {
         try {
             // 参数解析
             Integer studentId = Integer.parseInt(reservationInfo.get("studentId"));
@@ -92,24 +144,24 @@ public class ReservationController {
             // 基本参数验证
             if (studentId == null || labId == null || projectName == null ||
                     startTime == null || endTime == null) {
-                return -1; // 参数错误
+                return ResponseUtils.fail(ResponseCode.BAD_REQUEST); // 参数错误
             }
 
             // 验证时间合理性
             if (startTime.isAfter(endTime) || startTime.isEqual(endTime)) {
-                return -1; // 时间参数错误
+                return ResponseUtils.fail(ResponseCode.BAD_REQUEST); // 时间参数错误
             }
 
             //验证是否在开放时间内
             Laboratory laboratory = laboratoryMapper.selectLaboratoryById0(labId);
             if (startTime.toLocalTime().isBefore(laboratory.getOpenTime()) ||
                     endTime.toLocalTime().isAfter(laboratory.getCloseTime())) {
-                return -2; // 不在开放时间内
+                return ResponseUtils.fail(ResponseCode.LAB_UNAVAILABLE); // 不在开放时间内
             }
 
             // 检查实验室容量
             if (!checkLabCapacity(labId, startTime, endTime)) {
-                return -3; // 容量不足
+                return ResponseUtils.fail(ResponseCode.LAB_OUT_TIME); // 容量不足
             }
 
             // 创建预约记录
@@ -121,12 +173,14 @@ public class ReservationController {
             reservation.setStartTime(startTime);
             reservation.setEndTime(endTime);
             reservation.setStatus(0); // 待审核状态
-
-            return reservationMapper.insertReservation(reservation);
-
+            if(reservationMapper.insertReservation(reservation)==1){
+                return ResponseUtils.ok("预约成功", null);
+            }else {
+                return ResponseUtils.fail(ResponseCode.DATABASE_ERROR); // 系统异常
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return -2; // 系统异常
+            return ResponseUtils.fail(ResponseCode.INTERNAL_SERVER_ERROR); // 系统异常
         }
     }
 

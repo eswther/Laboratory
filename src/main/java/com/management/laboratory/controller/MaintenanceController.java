@@ -1,5 +1,8 @@
 package com.management.laboratory.controller;
 
+import com.management.laboratory.ApiResponse;
+import com.management.laboratory.ResponseCode;
+import com.management.laboratory.ResponseUtils;
 import com.management.laboratory.entity.Equipment;
 import com.management.laboratory.entity.Maintenance;
 import com.management.laboratory.entity.User;
@@ -32,8 +35,36 @@ public class MaintenanceController {
      * @return 维修信息列表
      */
     @RequestMapping("/getAllMaintenances")
-    public List<Maintenance> getAllMaintenances() {
-        return maintenanceMapper.selectAllMaintenances();
+    public ApiResponse<List<Maintenance>> getAllMaintenances() {
+        try {
+            List<Maintenance> maintenances = maintenanceMapper.selectAllMaintenances();
+            return ResponseUtils.ok("获取所有维修数据", maintenances);
+        } catch (Exception e) {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
+    }
+
+    public ApiResponse<List<Maintenance>> getMaintenancesByPage(Integer page, Integer size){
+        try {
+            // 参数校验
+            if (page == null || page < 1) {
+                page = 1;
+            }
+            if (size == null || size < 1) {
+                size = 10;
+            }
+            if (size > 100) {
+                size = 100; // 限制每页最大数量
+            }
+            // 计算偏移量
+            int offset = (page - 1) * size;
+            // 查询数据
+            List<Maintenance> maintenances = maintenanceMapper.selectMaintenancesByPage(offset, size);
+            int total = maintenanceMapper.countMaintenance();
+            return ResponseUtils.ok("获取维修信息列表成功", maintenances);
+        } catch (Exception e) {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -41,26 +72,30 @@ public class MaintenanceController {
      * @return 添加结果
      */
     @RequestMapping("/addMaintenance")
-    public int addMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
+    public ApiResponse<Void> addMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = new Maintenance();
         Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
         if (equipment == null){
-            return 3; // 设备不存在
+            return ResponseUtils.fail(ResponseCode.EQUIPMENT_NOT_EXIST); // 设备不存在
         }
         equipment.setStatus(false); // 设备状态设为维修中
         if(equipmentMapper.updateEquipment(equipment)!=1){;
-            return 2; // 设备状态更新失败
+            return ResponseUtils.fail(ResponseCode.EQUIPMENT_UPDATE_FAILURE); // 设备状态更新失败
         }
         User user = userMapper.selectUserByUserId(Integer.parseInt(maintenanceInfo.get("userId")));
         if (user == null){
-            return 4; // 用户不存在
+            return ResponseUtils.fail(ResponseCode.USER_NOT_EXIST); // 用户不存在
         }
         maintenance.setEquipment(equipment);
         maintenance.setUser(user);
         maintenance.setReportTime(LocalDateTime.parse(maintenanceInfo.get("reportTime"), localDateTimeFormatter));
         maintenance.setNotes(maintenanceInfo.get("notes"));
         maintenance.setStatus(Integer.parseInt(maintenanceInfo.get("status")));
-        return maintenanceMapper.insertMaintenance(maintenance);
+        if (maintenanceMapper.insertMaintenance(maintenance)==1){
+            return ResponseUtils.ok("维修信息添加成功", null);
+        }else {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -68,15 +103,15 @@ public class MaintenanceController {
      * @return 更新结果
      */
     @RequestMapping("/updateMaintenance")
-    public int updateMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
+    public ApiResponse<Void> updateMaintenance(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = maintenanceMapper.selectMaintenanceById(Integer.parseInt(maintenanceInfo.get("maintenanceId")));
         if (maintenance == null){
-            return 2; // 维修信息不存在
+            return ResponseUtils.fail(ResponseCode.MAINTENANCE_NOT_EXIST); // 维修信息不存在
         }
         if (maintenanceInfo.containsKey("equipmentId")) {
             Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
             if (equipment == null){
-                return 3; // 设备不存在
+                return ResponseUtils.fail(ResponseCode.EQUIPMENT_NOT_EXIST); // 设备不存在
             }
             maintenance.setEquipment(equipment);
         }
@@ -93,18 +128,22 @@ public class MaintenanceController {
                 Equipment equipment = maintenance.getEquipment();
                 equipment.setStatus(true); // 设备状态设为可用
                 if(equipmentMapper.updateEquipment(equipment)!=1){;
-                    return 4; // 设备状态更新失败
+                    return ResponseUtils.fail(ResponseCode.EQUIPMENT_UPDATE_FAILURE); // 设备状态更新失败
                 }
             }else if(maintenance.getStatus() == 2 && newStatus == 0){
                 Equipment equipment = maintenance.getEquipment();
                 equipment.setStatus(false); // 设备状态设为可用
                 if(equipmentMapper.updateEquipment(equipment)!=1){;
-                    return 4; // 设备状态更新失败
+                    return ResponseUtils.fail(ResponseCode.EQUIPMENT_UPDATE_FAILURE); // 设备状态更新失败
                 }
             }
             maintenance.setStatus(newStatus);
         }
-        return maintenanceMapper.updateMaintenance(maintenance);
+        if (maintenanceMapper.updateMaintenance(maintenance)==1){
+            return ResponseUtils.ok("维修信息更新成功", null);
+        }else {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -112,29 +151,33 @@ public class MaintenanceController {
      * @return 更新结果
      */
     @RequestMapping("/updateMaintenanceStatus")
-    public int updateMaintenanceStatus(@RequestBody Map<String, String> maintenanceInfo) {
+    public ApiResponse<Void>  updateMaintenanceStatus(@RequestBody Map<String, String> maintenanceInfo) {
         Maintenance maintenance = maintenanceMapper.selectMaintenanceById(Integer.parseInt(maintenanceInfo.get("maintenanceId")));
         if (maintenance == null){
-            return 2; // 维修信息不存在
+            return ResponseUtils.fail(ResponseCode.MAINTENANCE_NOT_EXIST); // 维修信息不存在
         }
         Equipment equipment = equipmentMapper.selectEquipmentById(Integer.parseInt(maintenanceInfo.get("equipmentId")));
         if (equipment == null){
-            return 3; // 设备不存在
+            return ResponseUtils.fail(ResponseCode.EQUIPMENT_NOT_EXIST); // 设备不存在
         }
         maintenance.setEquipment(equipment);
         int newStatus = Integer.parseInt(maintenanceInfo.get("status"));
         if (maintenance.getStatus() == 1 && newStatus == 2) {
             equipment.setStatus(true); // 设备状态设为可用
             if(equipmentMapper.updateEquipment(equipment)!=1){;
-                return 4; // 设备状态更新失败
+                return ResponseUtils.fail(ResponseCode.EQUIPMENT_UPDATE_FAILURE); // 设备状态更新失败
             }
         }else if(maintenance.getStatus() == 2 && newStatus == 0){
             equipment.setStatus(false); // 设备状态设为可用
             if(equipmentMapper.updateEquipment(equipment)!=1){;
-                return 4; // 设备状态更新失败
+                return ResponseUtils.fail(ResponseCode.EQUIPMENT_UPDATE_FAILURE); // 设备状态更新失败
             }
         }
         maintenance.setStatus(newStatus); // 设备状态设为维修中
-        return  maintenanceMapper.updateMaintenanceStatus(maintenance.getMaintenanceId(), maintenance.getStatus());
+        if(maintenanceMapper.updateMaintenanceStatus(maintenance.getMaintenanceId(), maintenance.getStatus())==1){
+            return ResponseUtils.ok("维修信息状态更新成功", null);
+        }else {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 }

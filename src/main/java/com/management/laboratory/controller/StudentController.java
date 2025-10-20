@@ -75,7 +75,8 @@ public class StudentController {
             session.setAttribute("registerStudent", newStudent);
             // 设置Session过期时间（例如10分钟）
             session.setMaxInactiveInterval(10 * 60);
-            result0 = userMapper.insertUser((User) session.getAttribute("registerUser")); // 添加用户信息到数据库中,得到返回结果
+            result0 = userMapper.insertUser(shareUser); // 添加用户信息到数据库中,得到返回结果
+            student.setUserId(shareUser.getUserId());
             result1 = studentMapper.insertStudent(newStudent); // 添加学生信息到数据库中,得到返回结果
         }
 

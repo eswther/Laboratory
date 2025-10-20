@@ -47,6 +47,19 @@ public interface ApprovalMapper {
     })
     List<Approval> selectAllApprovals();
 
+    @Select("SELECT a.approval_id, a.reservation_id, a.notes, a.status, a.approval_time, a.teacher_id, " +
+            "       r.reservation_id, r.student_id, r.project_name, r.start_time, r.end_time, r.status AS reservation_status, " +
+            "       l.lab_id, l.lab_name AS lab_name, l.location, l.capacity, l.open_time, l.close_time, " +
+            "       t.teacher_id, t.name AS teacher_name, t.number AS teacher_number, t.department AS teacher_department " +
+            "FROM approval a " +
+            "LEFT JOIN reservation r ON a.reservation_id = r.reservation_id " +
+            "LEFT JOIN laboratory l ON r.lab_id = l.lab_id " +
+            "LEFT JOIN teacher t ON a.teacher_id = t.teacher_id " +
+            "ORDER BY a.approval_time DESC"+
+            " LIMIT #{size} OFFSET #{offset}")
+    @ResultMap("approvalMap")
+    List<Approval> selectApprovalsByPage( int offset, int size);
+
     /**
      * 根据 studentId 获取审批信息
      * @param studentId 学生 id
