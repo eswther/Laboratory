@@ -108,16 +108,17 @@ public class TeacherController {
     @PostMapping("/updateTeacherInfo")
     public int updateStudentInfo(@RequestBody Map<String, String> teacherInfo) {
         Teacher teacher = teacherMapper.selectTeacherByUserId(Integer.parseInt(teacherInfo.get("userId")));
+
         if (teacher == null) {
             return 0; // 教师不存在，返回false
         }
 
-        // 更新学生信息
+        // 更新教师信息
         teacher.setName(teacherInfo.get("name"));
         teacher.setDepartment(teacherInfo.get("department"));
         teacher.setNumber(teacherInfo.get("number"));
 
-        // 这里假设有一个方法可以更新学生信息到数据库中
+        // 更新教师信息到数据库中
         int updateResult = teacherMapper.updateTeacher(teacher);
         return updateResult; // 返回更新是否成功
     }

@@ -130,7 +130,7 @@ public class StudentController {
         existingStudent.setMajor(studentInfo.get("major"));
         existingStudent.setNumber(studentInfo.get("number"));
 
-        // 这里假设有一个方法可以更新学生信息到数据库中
+        // 更新学生信息到数据库中
         int updateResult = studentMapper.updateStudent(existingStudent);
         return updateResult; // 返回更新是否成功
     }

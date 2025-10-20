@@ -51,9 +51,11 @@ public class LaboratoryController {
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
         laboratory.setOpenTime(LocalTime.parse(labInfo.get("openTime"), localTimeFormat));
         laboratory.setCloseTime(LocalTime.parse(labInfo.get("closeTime"), localTimeFormat));
+
         // 设备信息暂时为空
         laboratory.setEquipments(null);
         int result = laboratoryMapper.insertLaboratory(laboratory);
+
         return result;
     }
 
