@@ -50,6 +50,43 @@ public interface TeacherMapper {
     @Select("SELECT t.teacher_id, t.user_id, t.name, t.department, t.number "+// 只获取teacher_id用于关联查询
             "FROM teacher t ")
     public List<Teacher> selectAllTeachers();
+
+    /**
+     * 分页查询所有教师信息
+     * @return 教师信息列表
+     */
+    /**
+     * 分页查询教师
+     */
+    /**
+     * 分页查询教师
+     */
+    @Select({
+            "SELECT t.teacher_id, t.user_id, t.name, t.department, t.number "+
+            "FROM teacher t "+
+            "LEFT JOIN user u ON t.user_id = u.user_id "+
+            "WHERE 1=1 "+
+            "LIMIT #{size} OFFSET #{offset}"
+    })
+    @Results({
+            @Result(property = "teacherId", column = "teacher_id"),
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "name", column = "name"),
+            @Result(property = "department", column = "department"),
+            @Result(property = "number", column = "number"),
+            @Result(property = "createTime", column = "create_time"),
+            @Result(property = "user.account", column = "account"),
+            @Result(property = "user.permission", column = "permission")
+    })
+    List<Teacher> selectTeachersByPage(@Param("offset") int offset,
+                                       @Param("size") int size);
+
+    /**
+     * 统计教师数量
+     */
+    @Select("SELECT COUNT(*) FROM teacher t WHERE 1=1")
+    int countTeachers();
+
     /**
      * 根据 user_id 查询教师信息
      * @param userId 教师 user_id

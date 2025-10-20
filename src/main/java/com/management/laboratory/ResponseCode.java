@@ -14,6 +14,7 @@ public enum ResponseCode {
     FORBIDDEN(403, "禁止访问"),
     NOT_FOUND(404, "资源不存在"),
     METHOD_NOT_ALLOWED(405, "请求方法不允许"),
+    DATABASE_ERROR(409, "数据库错误"),
 
     // 服务器错误
     INTERNAL_SERVER_ERROR(500, "服务器内部错误"),
@@ -26,6 +27,10 @@ public enum ResponseCode {
     PASSWORD_ERROR(1004, "密码错误"),
     TOKEN_EXPIRED(1005, "Token已过期"),
     TOKEN_INVALID(1006, "Token无效"),
+    TEACHER_NOT_EXIST(1007, "教师不存在"),
+    TEACHER_EXIST(1008, "教师已存在"),
+    STUDENT_NOT_EXIST(1007, "学生已存在"),
+    STUDENT_EXIST(1008, "学生不存在"),
 
     // 实验室业务错误
     LAB_NOT_EXIST(2001, "实验室不存在"),

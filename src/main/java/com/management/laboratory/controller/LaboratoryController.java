@@ -1,5 +1,7 @@
 package com.management.laboratory.controller;
 
+import com.management.laboratory.ApiResponse;
+import com.management.laboratory.ResponseUtils;
 import com.management.laboratory.entity.Laboratory;
 import com.management.laboratory.mapper.EquipmentMapper;
 import com.management.laboratory.mapper.LaboratoryMapper;
@@ -25,15 +27,18 @@ public class LaboratoryController {
 
     DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     DateTimeFormatter localTimeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
-
     /**
      * 获取所有实验室信息
      * @return 实验室列表
      */
     @RequestMapping("/getAllLaboratories")
-    public List<Laboratory> getAllLaboratories() {
-        return laboratoryMapper.selectAllLaboratories();
+    public ApiResponse<List<Laboratory>> getAllLaboratories() {
+        return ResponseUtils.ok("获取所有实验室数据", laboratoryMapper.selectAllLaboratories());
     }
+
+
+
+
 
     /**
      * 添加实验室
@@ -44,18 +49,14 @@ public class LaboratoryController {
     public int addLab(@RequestBody Map<String, String> labInfo) {
 
         Laboratory laboratory = new Laboratory();
-
-        // 设置实验室信息
         laboratory.setLabName(labInfo.get("labName"));
         laboratory.setLocation(labInfo.get("location"));
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
         laboratory.setOpenTime(LocalTime.parse(labInfo.get("openTime"), localTimeFormat));
         laboratory.setCloseTime(LocalTime.parse(labInfo.get("closeTime"), localTimeFormat));
-
         // 设备信息暂时为空
         laboratory.setEquipments(null);
         int result = laboratoryMapper.insertLaboratory(laboratory);
-
         return result;
     }
 
@@ -70,8 +71,6 @@ public class LaboratoryController {
         int result1 = 0;
         result0 = equipmentMapper.deleteEquipmentByLabId(Integer.parseInt(labInfo.get("labId")));
         result1 = laboratoryMapper.deleteLaboratory(Integer.parseInt(labInfo.get("labId")));
-
-        // 返回删除结果
         if (result1 == 1){
             return 0;// 删除成功
         }else if(result0 == 0 && result1 == 0){
@@ -97,7 +96,6 @@ public class LaboratoryController {
         laboratory.setCapacity(Integer.parseInt(labInfo.get("capacity")));
         laboratory.setOpenTime(LocalTime.parse(labInfo.get("openTime"), localTimeFormat));
         laboratory.setCloseTime(LocalTime.parse(labInfo.get("closeTime"), localTimeFormat));
-
         return laboratoryMapper.updateLaboratory(laboratory);
     }
 

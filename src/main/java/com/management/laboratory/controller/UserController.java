@@ -1,5 +1,8 @@
 package com.management.laboratory.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.management.laboratory.ApiResponse;
+import com.management.laboratory.ResponseCode;
+import com.management.laboratory.ResponseUtils;
 import com.management.laboratory.entity.User;
 import com.management.laboratory.mapper.AdminMapper;
 import com.management.laboratory.mapper.StudentMapper;
@@ -40,16 +43,18 @@ public class UserController {
      * @return 1: 注册成功 2: 账号已存在 0: 注册失败
      */
     @PostMapping("/register")
-    public int register(HttpSession session, @RequestBody Map<String, String> userInfo) {
+    public ApiResponse<User> register(HttpSession session, @RequestBody Map<String, String> userInfo) {
         // 创建一个用户对象
         User newUser = new User(userInfo.get("account"), userInfo.get("password"), Integer.parseInt(userInfo.get("permission")));
 
         // 创建结果返回值，默认为0。
         int result = 0;
 
+
         // 判断账号是否已存在
         if(userMapper.selectUserByAccount(newUser.getAccount()) != null) {
             result = 2; // 将返回值设置为2，表示账号已存在
+            return ResponseUtils.fail(ResponseCode.USER_EXIST);
         }else {
             // 将用户信息存入Session
             session.setAttribute("registerUser", newUser);
@@ -58,9 +63,8 @@ public class UserController {
             userService.setShareUser(newUser);
             user = newUser;
             result = 1; // 将返回值设置为1，表示注册成功
+            return  ResponseUtils.ok("账号密码无误",newUser);
         }
-
-        return result; // 返回注册结果。
     }
 
     /**
@@ -70,41 +74,40 @@ public class UserController {
      * @return 登录结果
      */
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> userInfo) {
+    public ApiResponse<Map<String, Object>> login(HttpSession session, @RequestBody Map<String, String> userInfo) {
         Map<String, Object> map = new HashMap<>();
         // 跟据用户输入的账号和密码，从数据库中查询用户信息
         User loginUser = userMapper.selectUserByAccount(userInfo.get("account"));
 
-
         if (loginUser == null){
-            map.put("result", 1);
             map.put("userId", null);
+            map.put("permission", null);
             map.put("Id", null);
-            return map; //
+            return ResponseUtils.fail(ResponseCode.USER_NOT_EXIST); //
         }else if (!loginUser.getPassword().equals(userInfo.get("password"))){
             map.put("result", 2);
             map.put("userId", null);
             map.put("Id", null);
-            return map; //
+            return ResponseUtils.fail(ResponseCode.PASSWORD_ERROR); //
         }else { // 如果用户名和密码都匹配，则继续进行登录操作。
             userService.setShareUser(loginUser);
 
             switch (loginUser.getPermission()){
                 case 0: // 如果用户权限为0，则将用户信息保存到Admin对象中。
                     userService.setShareAdmin(adminMapper.selectAdminByUserId(loginUser.getUserId()));
-                    map.put("result", 0);
+                    map.put("permission", 0);
                     map.put("userId", loginUser.getUserId());
                     map.put("Id", userService.getShareAdmin().getAdminId());
                     break;
                 case 1: // 如果用户权限为1，则将用户信息保存到Teacher对象中。
                     userService.setShareTeacher(teacherMapper.selectTeacherByUserId(loginUser.getUserId()));
-                    map.put("result", 0);
+                    map.put("permission", 1);
                     map.put("userId", loginUser.getUserId());
                     map.put("Id", userService.getShareTeacher().getTeacherId());
                     break;
                 case 2: // 如果用户权限为2，则将用户信息保存到Student对象中。
                     userService.setShareStudent(studentMapper.selectStudentByUserId(loginUser.getUserId()));
-                    map.put("result", 0);
+                    map.put("permission", 2);
                     map.put("userId", loginUser.getUserId());
                     map.put("Id", userService.getShareStudent().getStudentId());
                     break;
@@ -112,7 +115,7 @@ public class UserController {
                     return null;
             }
         }
-        return map; // 返回登录结果。
+        return ResponseUtils.ok("登陆成功", map); // 返回登录结果。
     }
 
     /**
@@ -121,20 +124,23 @@ public class UserController {
      * @return 更新结果
      */
     @PostMapping("/updateUserInfo")
-    public int updateUserInfo(@RequestBody Map<String, String> userInfo) {
+    public ApiResponse<Void> updateUserInfo(@RequestBody Map<String, String> userInfo) {
         User existingUser = userMapper.selectUserByUserId(Integer.parseInt(userInfo.get("userId")));
 
         if (existingUser == null) {
-            return 0; // 用户不存在，返回false
+            return ResponseUtils.fail(ResponseCode.USER_NOT_EXIST); // 用户不存在，返回false
         }
         if(userMapper.selectUserByAccount(existingUser.getAccount()) != null) {
-            return  2; // 将返回值设置为2，表示账号已存在
+            return ResponseUtils.fail(ResponseCode.USER_EXIST); // 将返回值设置为2，表示账号已存在
         }
         // 更新用户信息
         existingUser.setAccount(userInfo.get("account"));
         existingUser.setPassword(userInfo.get("password"));
-
-        return userMapper.updateUser(existingUser); // 返回更新结果
+        if(userMapper.updateUser(existingUser)==1){
+            return ResponseUtils.ok("用户信息更新成功"); // 返回更新结果
+        }else {
+            return ResponseUtils.fail(ResponseCode.DATABASE_ERROR);
+        }
     }
 
 }
